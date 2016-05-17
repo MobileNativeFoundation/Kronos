@@ -13,24 +13,25 @@ final class NTPClient {
     /**
      Query the all ips that resolve from the given pool.
 
-     - parameter pool:       Server socket address
-     - parameter port:       Server port
-     - parameter version:    NTP version to use (default 3)
-     - parameter numberOfSamples:individual timeout for each of the NTP operations
-     - parameter timeout:    The individual timeout for each of the NTP operations
-     - parameter completion: A closure that will be response PDU on success or nil on error.
+     - parameter pool:            NTP pool that will be resolved into multiple NTP servers.
+     - parameter port:            Server NTP port (default 123).
+     - parameter version:         NTP version to use (default 3).
+     - parameter numberOfSamples: The number of samples to be acquired from each server as the integer.
+                                  samples (default 4).
+     - parameter timeout:         The individual timeout for each of the NTP operations.
+     - parameter completion:      A closure that will be response PDU on success or nil on error.
      */
-    func queryPool(pool: String = "pool.ntp.org", version: Int8 = 3, port: Int = 123,
+    func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
                    numberOfSamples: Int = kDefaultSamples, timeout: CFTimeInterval = kDefaultTimeout,
                    progress: (offset: NSTimeInterval?) -> Void)
     {
         var servers: [String: [NTPPacket]] = [:]
 
-        let queryIPAndStoreResult = { [weak self] (address: String) -> Void in
-            self?.queryIP(address, port: port, version: version, timeout: timeout) { packet in
+        let queryIPAndStoreResult = { (address: String) -> Void in
+            self.queryIP(address, port: port, version: version, timeout: timeout) { packet in
                 defer {
                     let responses = Array(servers.values)
-                    progress(offset: self?.offsetFromResponses(responses))
+                    progress(offset: self.offsetFromResponses(responses))
                 }
 
                 guard let PDU = packet else {

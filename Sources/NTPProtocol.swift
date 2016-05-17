@@ -264,6 +264,8 @@ struct NTPPacket {
 
      - parameter data:            The PDU received from the NTP call.
      - parameter destinationTime: The time where the package arrived (client time) in EPOCH format.
+
+     - throws: NTPParsingError in case of an invalid response
      */
     init(data: NSData, destinationTime: NSTimeInterval) throws {
         if data.length < 48 {
@@ -290,7 +292,6 @@ struct NTPPacket {
      Convert this NTPPacket to a buffer that can be sent over a socket.
 
      - returns: a bytes buffer representing this packet
-     - throws: NTPException in case of invalid field
     */
     mutating func prepareToSend(transmitTime transmitTime: NSTimeInterval? = nil) -> NSData {
         let data = NSMutableData()
