@@ -49,7 +49,7 @@ extension NSTimer {
 
     :returns: a new NSTimer object, configured according to the specified parameters.
     */
-    class public func scheduledTimerWithTimeInterval(interval: NSTimeInterval, repeats: Bool = false,
+    class func scheduledTimerWithTimeInterval(interval: NSTimeInterval, repeats: Bool = false,
         handler: CKTimerHandler) -> NSTimer
     {
         return NSTimer.scheduledTimerWithTimeInterval(interval, target: self,

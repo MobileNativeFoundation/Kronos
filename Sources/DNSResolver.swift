@@ -25,6 +25,7 @@ class DNSResolver {
             let retainedSelf = Unmanaged<DNSResolver>.fromOpaque(COpaquePointer(info))
             let resolver = retainedSelf.takeUnretainedValue()
             resolver.timer?.invalidate()
+            resolver.timer = nil
 
             var resolved: DarwinBoolean = false
             guard let addresses = CFHostGetAddressing(host, &resolved) where resolved else {
