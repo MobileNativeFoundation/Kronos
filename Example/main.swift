@@ -9,17 +9,25 @@ private let kLEDDigits: [Int32] = [
     0b1011011, 0b1011111, 0b1110000, 0b1111111, 0b1111011
 ]
 
-private func mvprintw(y: Int32, _ x: Int32, _ message: String) {
-    move(y, x)
-    addstr(message)
+private struct ncurses {
+    static func clear(x x: Int32, y: Int32, width: Int32, height: Int32) {
+        for x in x ..< x + width {
+            for y in y ..< y + height {
+                ncurses.mvprintw(y, x, " ")
+            }
+        }
+    }
+
+    static func mvprintw(y: Int32, _ x: Int32, _ message: String) {
+        move(y, x)
+        addstr(message)
+    }
 }
 
 class ASCIIClock {
     private var timer: NSTimer?
 
     private func start() {
-        print("Waiting for clock sync ...")
-
         initscr() // Init window. Must be first
         keypad(stdscr, true) // Enable function and arrow keys
         noecho()
@@ -43,6 +51,10 @@ class ASCIIClock {
                                                             selector: #selector(ASCIIClock.tick),
                                                             userInfo: nil, repeats: true)
         self.timer?.fire()
+
+        // Initial NTP date is 0:0:0
+        self.drawClock(hour: 0, minute: 0, second: 0,
+                       title: "Not sync'ed", x: getmaxx(stdscr) / 3 - (kClockWidth / 2))
         self.loop()
     }
 
@@ -52,7 +64,7 @@ class ASCIIClock {
         for bit in 0 ..< 7 where (digitMask >> Int32(bit)) & 1 == 1 {
             let (yOffset, xOffset) = kPositionOffsetByBit[bit]
             let ascii = bit % 3 == 0 ? "__" : "|"
-            mvprintw(y + yOffset, x + xOffset, ascii)
+            ncurses.mvprintw(y + yOffset, x + xOffset, ascii)
         }
     }
 
@@ -61,9 +73,8 @@ class ASCIIClock {
         let calendar = NSCalendar.currentCalendar()
         let now = calendar.components([.Hour, .Minute, .Second], fromDate: NSDate())
 
-        clear()
         let column = getmaxx(stdscr), row = getmaxy(stdscr)
-        mvprintw(row - 1, 0, "(q)uit, (s)ync")
+        ncurses.mvprintw(row - 1, 0, "(q)uit, (s)ync")
 
         self.drawClock(hour: now.hour, minute: now.minute, second: now.second, 
                        title: "Clock date", x: column * 2 / 3 - (kClockWidth / 2))
@@ -72,15 +83,13 @@ class ASCIIClock {
             let now = calendar.components([.Hour, .Minute, .Second], fromDate: date)
             self.drawClock(hour: now.hour, minute: now.minute, second: now.second,
                            title: "NTP date", x: column / 3 - (kClockWidth / 2))
-        } else {
-            self.drawClock(hour: 0, minute: 0, second: 0, 
-                           title: "Not sync'ed", x: column / 3 - (kClockWidth / 2))
         }
     }
 
     private func drawClock(hour hour: Int, minute: Int, second: Int, title: String, x: Int32) {
         let y: Int32 = getmaxy(stdscr) / 2 - 1
 
+        ncurses.clear(x: x, y: y - 1, width: Int32(kClockWidth), height: 5)
         for (index, component) in [hour, minute, second].enumerate() {
             printDigit(component / 10, y: y, x: x + 9 * index)
             printDigit(component % 10, y: y, x: x + 9 * index + 4)
@@ -90,7 +99,8 @@ class ASCIIClock {
             }
         }
 
-        mvprintw(y - 1, x, title.stringByPaddingToLength(kClockWidth, withString: " ", startingAtIndex: 0))
+        ncurses.mvprintw(y - 1, x,
+                         title.stringByPaddingToLength(kClockWidth, withString: " ", startingAtIndex: 0))
         refresh()
     }
 
