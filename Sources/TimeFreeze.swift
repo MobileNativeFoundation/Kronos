@@ -14,12 +14,8 @@ struct TimeFreeze {
     }
 
     init(offset: NSTimeInterval) {
-        var current = timeval()
-        let systemTimeError = gettimeofday(&current, nil) != 0
-        assert(!systemTimeError, "system clock error: system time unavailable")
-
         self.offset = offset
-        self.timestamp = Double(current.tv_sec) + 1_000_000 * Double(current.tv_usec)
+        self.timestamp = currentTime()
         self.uptime = TimeFreeze.systemUptime()
     }
 
@@ -37,19 +33,14 @@ struct TimeFreeze {
         var mib = [CTL_KERN, KERN_BOOTTIME]
         var size = strideof(timeval)
         var bootTime = timeval()
-        var now = timeval()
-
-        let systemTimeError = gettimeofday(&now, nil) != 0
-        assert(!systemTimeError, "system clock error: system time unavailable")
 
         let bootTimeError = sysctl(&mib, u_int(mib.count), &bootTime, &size, nil, 0) != 0
         assert(!bootTimeError, "system clock error: kernel boot time unavailable")
 
-        let seconds = Double(now.tv_sec - bootTime.tv_sec)
-        assert(now.tv_sec >= bootTime.tv_sec, "inconsistent clock state: system time precedes boot time")
+        let now = currentTime()
+        let uptime = Double(bootTime.tv_sec) + Double(bootTime.tv_usec) / 1_000_000
+        assert(now >= uptime, "inconsistent clock state: system time precedes boot time")
 
-        // boottime.tv_usec is actually always 0 on darwin systems
-        let microseconds = Double(now.tv_usec - bootTime.tv_usec) / 1_000_000
-        return seconds + microseconds
+        return now - uptime
     }
 }

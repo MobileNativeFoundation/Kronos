@@ -2,7 +2,8 @@ import Foundation
 
 private let kDefaultTimeout = 5.0
 private let kDefaultSamples = 4
-private let kMaxNTPServers = 5
+private let kMaximumNTPServers = 5
+private let kMaximumResultDispersion = 10.0
 
 private typealias ObjCCompletionType = @convention(block) (NSData?, NSTimeInterval) -> Void
 
@@ -49,7 +50,7 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
-            addresses[0 ..< min(addresses.count, kMaxNTPServers)].forEach(queryIPAndStoreResult)
+            addresses[0 ..< min(addresses.count, kMaximumNTPServers)].forEach(queryIPAndStoreResult)
         }
     }
 
@@ -75,7 +76,7 @@ final class NTPClient {
                 return completion(PDU: nil)
             }
 
-            completion(PDU: PDU.isValidResponse(forVersion: version, clientDelta: clientDelta) ? PDU : nil)
+            completion(PDU: PDU.isValidResponse(forClientDelta: clientDelta) ? PDU : nil)
 
             // If we still have samples left; we'll keep querying the same server
             if numberOfSamples > 0 {
@@ -106,11 +107,19 @@ final class NTPClient {
     // MARK: - Private helpers (NTP Calculation)
 
     private func offsetFromResponses(responses: [[NTPPacket]]) -> NSTimeInterval? {
-        let bestResponses = responses
-            .flatMap { serverResponses in
-                serverResponses.minElement { $0.delay < $1.delay }
-            }
+        let now = currentTime()
+        var bestResponses: [NTPPacket] = []
+        for serverResponses in responses {
+            let filtered = serverResponses
+                .filter { abs($0.originTime - now) < kMaximumResultDispersion }
+                .minElement { $0.delay < $1.delay }
 
+            if let filtered = filtered {
+                bestResponses.append(filtered)
+            }
+        }
+
+        bestResponses.sortInPlace { $0.offset < $1.offset }
         return bestResponses.count > 0 ? bestResponses[bestResponses.count / 2].offset : nil
     }
 

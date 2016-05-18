@@ -183,8 +183,7 @@ func currentTime() -> NSTimeInterval {
     let systemTimeError = gettimeofday(&current, nil) != 0
     assert(!systemTimeError, "system clock error: system time unavailable")
 
-    // Warning: we are not accounting here for leap seconds
-    return Double(current.tv_sec) + 1.0e-6 * Double(current.tv_usec)
+    return Double(current.tv_sec) + Double(current.tv_usec) / 1_000_000
 }
 
 struct NTPPacket {
@@ -316,14 +315,14 @@ struct NTPPacket {
     /**
      Checks properties to make sure that the received PDU is a valid response that we can use.
 
-     - parameter version: The request NTP version that should match with the received PDU.
+     - parameter clientDelta: The time that the client calculated from T1 to T4.
 
      - returns: a boolean indicating if the response is valid for the given version.
      */
-    func isValidResponse(forVersion version: Int8, clientDelta: NSTimeInterval) -> Bool {
-        return self.version == version && (self.mode == .Server || self.mode == .SymmetricPassive)
-            && self.leap != .Alarm && self.stratum != .Invalid && self.stratum != .Unspecified
-            && self.delay > 0 && abs(clientDelta - self.delay) < kMaximumDelayDifference
+    func isValidResponse(forClientDelta clientDelta: NSTimeInterval) -> Bool {
+        return (self.mode == .Server || self.mode == .SymmetricPassive) && self.leap != .Alarm
+            && self.stratum != .Invalid && self.stratum != .Unspecified
+            && abs(clientDelta - self.delay) < kMaximumDelayDifference
     }
 
 
