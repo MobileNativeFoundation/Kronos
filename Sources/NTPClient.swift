@@ -68,15 +68,13 @@ final class NTPClient {
                  numberOfSamples: Int = kDefaultSamples, completion: (PDU: NTPPacket?) -> Void)
     {
         var timer: NSTimer? = nil
-        var uptime: NSTimeInterval! = nil
         let bridgeCallback: ObjCCompletionType = { [weak self] data, destinationTime in
-            let clientDelta = TimeFreeze.systemUptime() - uptime
             timer?.invalidate()
             guard let data = data, PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else {
                 return completion(PDU: nil)
             }
 
-            completion(PDU: PDU.isValidResponse(forClientDelta: clientDelta) ? PDU : nil)
+            completion(PDU: PDU.isValidResponse() ? PDU : nil)
 
             // If we still have samples left; we'll keep querying the same server
             if numberOfSamples > 0 {
@@ -92,7 +90,6 @@ final class NTPClient {
             completion: UnsafeMutablePointer<Void>(retainedCallback.toOpaque())
         )
 
-        uptime = TimeFreeze.systemUptime()
         timer = NSTimer.scheduledTimerWithTimeInterval(timeout) { _ in
             completion(PDU: nil)
             retainedCallback.release()

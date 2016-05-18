@@ -315,14 +315,12 @@ struct NTPPacket {
     /**
      Checks properties to make sure that the received PDU is a valid response that we can use.
 
-     - parameter clientDelta: The time that the client calculated from T1 to T4.
-
      - returns: a boolean indicating if the response is valid for the given version.
      */
-    func isValidResponse(forClientDelta clientDelta: NSTimeInterval) -> Bool {
+    func isValidResponse() -> Bool {
         return (self.mode == .Server || self.mode == .SymmetricPassive) && self.leap != .Alarm
             && self.stratum != .Invalid && self.stratum != .Unspecified
-            && abs(clientDelta - self.delay) < kMaximumDelayDifference
+            && abs(currentTime() - self.originTime - self.delay) < kMaximumDelayDifference
     }
 
 
