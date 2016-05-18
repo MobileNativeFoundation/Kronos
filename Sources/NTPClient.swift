@@ -2,6 +2,7 @@ import Foundation
 
 private let kDefaultTimeout = 5.0
 private let kDefaultSamples = 4
+private let kMaxNTPServers = 5
 
 private typealias ObjCCompletionType = @convention(block) (NSData?, NSTimeInterval) -> Void
 
@@ -16,8 +17,7 @@ final class NTPClient {
      - parameter pool:            NTP pool that will be resolved into multiple NTP servers.
      - parameter port:            Server NTP port (default 123).
      - parameter version:         NTP version to use (default 3).
-     - parameter numberOfSamples: The number of samples to be acquired from each server as the integer.
-                                  samples (default 4).
+     - parameter numberOfSamples: The number of samples to be acquired from each server (default 4).
      - parameter timeout:         The individual timeout for each of the NTP operations.
      - parameter completion:      A closure that will be response PDU on success or nil on error.
      */
@@ -28,7 +28,9 @@ final class NTPClient {
         var servers: [String: [NTPPacket]] = [:]
 
         let queryIPAndStoreResult = { (address: String) -> Void in
-            self.queryIP(address, port: port, version: version, timeout: timeout) { packet in
+            self.queryIP(address, port: port, version: version, timeout: timeout,
+                         numberOfSamples: numberOfSamples)
+            { packet in
                 defer {
                     let responses = Array(servers.values)
                     progress(offset: self.offsetFromResponses(responses))
@@ -47,32 +49,39 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
-            for _ in 0 ..< numberOfSamples {
-                addresses.forEach(queryIPAndStoreResult)
-            }
+            addresses[0 ..< min(addresses.count, kMaxNTPServers)].forEach(queryIPAndStoreResult)
         }
     }
 
     /**
      Query the given ntp server for the time exchange.
 
-     - parameter ip:         Server socket address
-     - parameter port:       Server port
-     - parameter version:    NTP version to use (default 3)
-     - parameter timeout:    Timeout on socket operations
-     - parameter completion: A closure that will be response PDU on success or nil on error.
+     - parameter ip:              Server socket address.
+     - parameter port:            Server NTP port (default 123).
+     - parameter version:         NTP version to use (default 3).
+     - parameter timeout:         Timeout on socket operations.
+     - parameter numberOfSamples: The number of samples to be acquired from the server (default 4).
+     - parameter completion:      A closure that will be response PDU on success or nil on error.
      */
     func queryIP(ip: String, port: Int = 123, version: Int8 = 3, timeout: CFTimeInterval = kDefaultTimeout,
-                 completion: (PDU: NTPPacket?) -> Void)
+                 numberOfSamples: Int = kDefaultSamples, completion: (PDU: NTPPacket?) -> Void)
     {
         var timer: NSTimer? = nil
-        let bridgeCallback: ObjCCompletionType = { data, destinationTime in
+        var uptime: NSTimeInterval! = nil
+        let bridgeCallback: ObjCCompletionType = { [weak self] data, destinationTime in
+            let clientDelta = TimeFreeze.systemUptime() - uptime
             timer?.invalidate()
             guard let data = data, PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else {
                 return completion(PDU: nil)
             }
 
-            completion(PDU: PDU.isValidResponse(forVersion: version) ? PDU : nil)
+            completion(PDU: PDU.isValidResponse(forVersion: version, clientDelta: clientDelta) ? PDU : nil)
+
+            // If we still have samples left; we'll keep querying the same server
+            if numberOfSamples > 0 {
+                self?.queryIP(ip, port: port, version: version, timeout: timeout,
+                              numberOfSamples: numberOfSamples - 1, completion: completion)
+            }
         }
 
         let callback = unsafeBitCast(bridgeCallback, AnyObject.self)
@@ -82,6 +91,7 @@ final class NTPClient {
             completion: UnsafeMutablePointer<Void>(retainedCallback.toOpaque())
         )
 
+        uptime = TimeFreeze.systemUptime()
         timer = NSTimer.scheduledTimerWithTimeInterval(timeout) { _ in
             completion(PDU: nil)
             retainedCallback.release()
@@ -114,7 +124,7 @@ final class NTPClient {
                 var packet = NTPPacket()
                 let PDU = packet.prepareToSend()
                 let data = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(PDU.bytes), PDU.length)
-                CFSocketSendData(socket, address, data, kDefaultTimeout)
+                CFSocketSendData(socket, nil, data, kDefaultTimeout)
                 return
             }
 

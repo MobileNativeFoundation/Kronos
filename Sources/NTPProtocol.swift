@@ -3,6 +3,9 @@ import Foundation
 /// Delta between system and NTP time
 private let kEpochDelta = 2208988800.0
 
+/// This is the maximum that we'll tolerate for the client's time vs self.delay
+private let kMaximumDelayDifference = 0.1
+
 /**
  Exception raised when the received PDU is invalid.
  */
@@ -317,10 +320,10 @@ struct NTPPacket {
 
      - returns: a boolean indicating if the response is valid for the given version.
      */
-    func isValidResponse(forVersion version: Int8) -> Bool {
+    func isValidResponse(forVersion version: Int8, clientDelta: NSTimeInterval) -> Bool {
         return self.version == version && (self.mode == .Server || self.mode == .SymmetricPassive)
             && self.leap != .Alarm && self.stratum != .Invalid && self.stratum != .Unspecified
-            && self.delay > 0
+            && self.delay > 0 && abs(clientDelta - self.delay) < kMaximumDelayDifference
     }
 
 
