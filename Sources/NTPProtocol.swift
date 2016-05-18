@@ -177,9 +177,8 @@ enum ClockSource {
  */
 func currentTime() -> NSTimeInterval {
     var current = timeval()
-    if gettimeofday(&current, nil) != 0 {
-        return 0
-    }
+    let systemTimeError = gettimeofday(&current, nil) != 0
+    assert(!systemTimeError, "system clock error: system time unavailable")
 
     // Warning: we are not accounting here for leap seconds
     return Double(current.tv_sec) + 1.0e-6 * Double(current.tv_usec)
@@ -349,5 +348,32 @@ struct NTPPacket {
         let integer = Double(time >> 16)
         let decimal = Double(time & 0xffff) / 65536
         return integer + decimal
+    }
+}
+
+/**
+ From RFC 2030 (with a correction to the delay math):
+
+ Timestamp Name          ID   When Generated
+ ------------------------------------------------------------
+ Originate Timestamp     T1   time request sent by client
+ Receive Timestamp       T2   time request received by server
+ Transmit Timestamp      T3   time reply sent by server
+ Destination Timestamp   T4   time reply received by client
+
+ The roundtrip delay d and local clock offset t are defined as
+
+ d = (T4 - T1) - (T3 - T2)     t = ((T2 - T1) + (T3 - T4)) / 2.
+ */
+extension NTPPacket {
+
+    /// Clocks offset in seconds.
+    var offset: NSTimeInterval {
+        return ((self.receiveTime - self.originTime) + (self.transmitTime - self.destinationTime)) / 2.0
+    }
+
+    /// Round-trip delay in seconds
+    var delay: NSTimeInterval {
+        return (self.destinationTime - self.originTime) - (self.transmitTime - self.receiveTime)
     }
 }
