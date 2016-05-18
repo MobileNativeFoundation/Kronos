@@ -9,7 +9,7 @@ import Foundation
  Example usage:
 
  ```swift
- Clock.sync { date in
+ Clock.sync { date, offset in
     print(date)
  }
 
