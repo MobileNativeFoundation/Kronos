@@ -5,6 +5,7 @@ private let kEpochDelta = 2208988800.0
 
 /// This is the maximum that we'll tolerate for the client's time vs self.delay
 private let kMaximumDelayDifference = 0.1
+private let kMaximumDispersion = 100.0
 
 /**
  Exception raised when the received PDU is invalid.
@@ -320,6 +321,7 @@ struct NTPPacket {
     func isValidResponse() -> Bool {
         return (self.mode == .Server || self.mode == .SymmetricPassive) && self.leap != .Alarm
             && self.stratum != .Invalid && self.stratum != .Unspecified
+            && self.rootDispersion < kMaximumDispersion
             && abs(currentTime() - self.originTime - self.delay) < kMaximumDelayDifference
     }
 
