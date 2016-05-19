@@ -31,7 +31,7 @@ final class NTPClientTests: XCTestCase {
         let expectation = self.expectationWithDescription("Offset from ref clock to local clock are accurate")
         NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
             NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1) { offset2, _, _ in
-                XCTAssertLessThan(abs(offset - offset2), 0.005)
+                XCTAssertLessThan(abs(offset - offset2), 0.05)
                 expectation.fulfill()
             }
         }
