@@ -54,7 +54,7 @@ public struct Clock {
                 self.stableTime = TimeFreeze(offset: offset)
 
                 if done == 1, let now = self.now {
-                    first?(date: now, offset: offset)
+                    first?(date: now)
                 }
             }
 
