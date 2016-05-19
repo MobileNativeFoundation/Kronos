@@ -177,11 +177,7 @@ final class NTPClient {
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopCommonModes)
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            CFSocketSetSocketFlags(socket, kCFSocketCloseOnInvalidate)
-            CFSocketConnectToAddress(socket, self.addressDataFromIP(ip, port: port), timeout)
-        }
-
+        CFSocketConnectToAddress(socket, self.addressDataFromIP(ip, port: port), timeout)
         return (runLoopSource, socket)
     }
 
