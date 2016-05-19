@@ -44,20 +44,22 @@ public struct Clock {
      - parameter first:      A closure that will be called after the first valid date is calculated.
      */
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            last: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil,
+                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil,
                             first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil)
     {
         self.reset()
 
         NTPClient().queryPool(pool, numberOfSamples: samples) { offset, done, total in
-            self.stableTime = TimeFreeze(offset: offset)
+            if let offset = offset {
+                self.stableTime = TimeFreeze(offset: offset)
 
-            if done == 1, let now = self.now {
-                first?(date: now, offset: offset)
+                if done == 1, let now = self.now {
+                    first?(date: now, offset: offset)
+                }
             }
 
-            if done == total, let now = self.now {
-                last?(date: now, offset: offset)
+            if done == total {
+                completion?(date: self.now, offset: offset)
             }
         }
     }

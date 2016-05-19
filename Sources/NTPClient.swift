@@ -31,7 +31,7 @@ final class NTPClient {
      */
     func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
                    numberOfSamples: Int = kDefaultSamples, timeout: CFTimeInterval = kDefaultTimeout,
-                   progress: (offset: NSTimeInterval, done: Int, total: Int) -> Void)
+                   progress: (offset: NSTimeInterval?, completed: Int, total: Int) -> Void)
     {
         var servers: [String: [NTPPacket]] = [:]
         var completed: Int = 0
@@ -43,13 +43,9 @@ final class NTPClient {
                 defer {
                     completed += 1
 
-                    do {
-                        let responses = Array(servers.values)
-                        progress(offset: try self.offsetFromResponses(responses),
-                                 done: completed, total: totalQueries)
-                    } catch {
-                        // Nothing to do here.
-                    }
+                    let responses = Array(servers.values)
+                    progress(offset: try? self.offsetFromResponses(responses),
+                             completed: completed, total: totalQueries)
                 }
 
                 guard let PDU = packet else {
