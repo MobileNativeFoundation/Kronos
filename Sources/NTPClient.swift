@@ -8,6 +8,13 @@ private let kMaximumResultDispersion = 10.0
 private typealias ObjCCompletionType = @convention(block) (NSData?, NSTimeInterval) -> Void
 
 /**
+ Exception raised while sending / receiving NTP packets.
+ */
+enum NTPNetworkError: ErrorType {
+    case NoValidNTPPacketFound
+}
+
+/**
  NTP client session.
  */
 final class NTPClient {
@@ -24,17 +31,25 @@ final class NTPClient {
      */
     func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
                    numberOfSamples: Int = kDefaultSamples, timeout: CFTimeInterval = kDefaultTimeout,
-                   progress: (offset: NSTimeInterval?) -> Void)
+                   progress: (offset: NSTimeInterval, done: Int, total: Int) -> Void)
     {
         var servers: [String: [NTPPacket]] = [:]
+        var completed: Int = 0
 
-        let queryIPAndStoreResult = { (address: String) -> Void in
+        let queryIPAndStoreResult = { (address: String, totalQueries: Int) -> Void in
             self.queryIP(address, port: port, version: version, timeout: timeout,
                          numberOfSamples: numberOfSamples)
             { packet in
                 defer {
-                    let responses = Array(servers.values)
-                    progress(offset: self.offsetFromResponses(responses))
+                    completed += 1
+
+                    do {
+                        let responses = Array(servers.values)
+                        progress(offset: try self.offsetFromResponses(responses),
+                                 done: completed, total: totalQueries)
+                    } catch {
+                        // Nothing to do here.
+                    }
                 }
 
                 guard let PDU = packet else {
@@ -50,7 +65,10 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
-            addresses[0 ..< min(addresses.count, kMaximumNTPServers)].forEach(queryIPAndStoreResult)
+            let totalServers = min(addresses.count, kMaximumNTPServers)
+            for address in addresses[0 ..< totalServers] {
+                queryIPAndStoreResult(address, totalServers * numberOfSamples)
+            }
         }
     }
 
@@ -103,7 +121,7 @@ final class NTPClient {
 
     // MARK: - Private helpers (NTP Calculation)
 
-    private func offsetFromResponses(responses: [[NTPPacket]]) -> NSTimeInterval? {
+    private func offsetFromResponses(responses: [[NTPPacket]]) throws -> NSTimeInterval {
         let now = currentTime()
         var bestResponses: [NTPPacket] = []
         for serverResponses in responses {
@@ -116,8 +134,12 @@ final class NTPClient {
             }
         }
 
+        if bestResponses.count == 0 {
+            throw NTPNetworkError.NoValidNTPPacketFound
+        }
+
         bestResponses.sortInPlace { $0.offset < $1.offset }
-        return bestResponses.count > 0 ? bestResponses[bestResponses.count / 2].offset : nil
+        return bestResponses[bestResponses.count / 2].offset
     }
 
     // MARK: - Private helpers (CFSocket)

@@ -8,14 +8,18 @@ final class NTPClientTests: XCTestCase {
         Clock.reset()
     }
 
-    func testQueryPool() {
-        let expectation = self.expectationWithDescription("Offset from ref clock to local clock are accurate")
-        NTPClient().queryPool("blue.1e400.net", numberOfSamples: 2) { offset in
-            XCTAssertNotNil(offset)
+    func testQueryIP() {
+        let expectation = self.expectationWithDescription("NTPClient queries single IPs")
 
-            NTPClient().queryPool("blue.1e400.net", numberOfSamples: 2) { offset2 in
-                XCTAssertNotNil(offset2)
-                XCTAssertLessThan(abs(offset! - offset2!), 0.005)
+        DNSResolver.resolve(host: "time.apple.com") { addresses in
+            XCTAssertGreaterThan(addresses.count, 0)
+
+            NTPClient().queryIP(addresses.first!, version: 3) { PDU in
+                XCTAssertNotNil(PDU)
+
+                XCTAssertGreaterThanOrEqual(PDU!.version, 3)
+                XCTAssertTrue(PDU!.isValidResponse())
+
                 expectation.fulfill()
             }
         }
@@ -23,15 +27,15 @@ final class NTPClientTests: XCTestCase {
         self.waitForExpectationsWithTimeout(10) { _ in }
     }
 
-    func testQueryIP() {
-        let expectation = self.expectationWithDescription("NTPClient queries single IPs")
-        NTPClient().queryIP("71.19.145.222", version: 3) { PDU in
-            XCTAssertNotNil(PDU)
+    func testQueryPool() {
+        let expectation = self.expectationWithDescription("Offset from ref clock to local clock are accurate")
+        NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
+            NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1) { offset2, _, _ in
 
-            XCTAssertEqual(PDU!.version, 3)
-            XCTAssertTrue(PDU!.isValidResponse(forVersion: 3))
-
-            expectation.fulfill()
+                print(offset, offset2)
+                XCTAssertLessThan(abs(offset - offset2), 0.005)
+                expectation.fulfill()
+            }
         }
 
         self.waitForExpectationsWithTimeout(10) { _ in }

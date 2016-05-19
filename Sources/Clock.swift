@@ -1,9 +1,9 @@
 import Foundation
 
 /**
- High level implementation for clock synchronization using NTP. All returned dates use the most accurate 
+ High level implementation for clock synchronization using NTP. All returned dates use the most accurate
  synchronization and it's not affected by clock changes. The NTP synchronization implementation has
- sub-second accuracy but given that Darwin doesn't support microseconds on bootTime, dates don't have 
+ sub-second accuracy but given that Darwin doesn't support microseconds on bootTime, dates don't have
  sub-second accuracy.
 
  Example usage:
@@ -32,9 +32,9 @@ public struct Clock {
     }
 
     /**
-     Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given closure 
-     will be called with the first valid NTP response which accuracy should be good enough for the initial 
-     clock adjustment but it might not be the most accurate representation. After calling the closure this 
+     Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given closure
+     will be called with the first valid NTP response which accuracy should be good enough for the initial
+     clock adjustment but it might not be the most accurate representation. After calling the closure this
      method will continue syncing with multiple servers and multiple passes.
 
      - parameter pool:    NTP pool that will be resolved into multiple NTP servers that will be used
@@ -45,18 +45,22 @@ public struct Clock {
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
                             first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil)
     {
-        var isFirstResult = true
-        NTPClient().queryPool(pool, numberOfSamples: samples) { offset in
-            guard let offset = offset else {
-                return
-            }
+        self.reset()
 
+        NTPClient().queryPool(pool, numberOfSamples: samples) { offset, done, total in
             self.stableTime = TimeFreeze(offset: offset)
 
-            if isFirstResult, let now = self.now {
-                isFirstResult = false
+            if done == 1, let now = self.now {
                 first?(date: now, offset: offset)
             }
         }
+    }
+
+    /**
+     Resets all state of the monotonic clock. Note that you won't be able to access `now` until you `sync`
+     again
+     */
+    public static func reset() {
+        self.stableTime = nil
     }
 }
