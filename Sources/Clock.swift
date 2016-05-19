@@ -44,8 +44,8 @@ public struct Clock {
      - parameter first:      A closure that will be called after the first valid date is calculated.
      */
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil,
-                            first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil)
+                            first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil,
+                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil)
     {
         self.reset()
 
