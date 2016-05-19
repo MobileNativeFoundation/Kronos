@@ -3,11 +3,6 @@ import XCTest
 
 final class NTPClientTests: XCTestCase {
 
-    override func tearDown() {
-        super.setUp()
-        Clock.reset()
-    }
-
     func testQueryIP() {
         let expectation = self.expectationWithDescription("NTPClient queries single IPs")
 
