@@ -44,8 +44,8 @@ public struct Clock {
      - parameter first:      A closure that will be called after the first valid date is calculated.
      */
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)?,
-                            first: ((date: NSDate, offset: NSTimeInterval) -> Void)?)
+                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil,
+                            first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil)
     {
         self.reset()
 
@@ -62,23 +62,6 @@ public struct Clock {
                 completion?(date: self.now, offset: offset)
             }
         }
-    }
-
-    /**
-     Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given closure
-     will be called with the first valid NTP response which accuracy should be good enough for the initial
-     clock adjustment but it might not be the most accurate representation. After calling the closure this
-     method will continue syncing with multiple servers and multiple passes.
-
-     - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used
-                             for the synchronization.
-     - parameter samples:    The number of samples to be acquired from each server (default 4).
-     - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
-     */
-    public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil)
-    {
-        self.sync(from: pool, samples: samples, completion: completion, first: nil)
     }
 
     /**
