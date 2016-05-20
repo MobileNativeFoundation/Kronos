@@ -10,10 +10,10 @@ final class ClockTests: XCTestCase {
 
     func testFirst() {
         let expectation = self.expectationWithDescription("Clock sync calls first closure")
-        Clock.sync(first: { date in
+        Clock.sync(completion: nil) { date in
             XCTAssertNotNil(date)
             expectation.fulfill()
-        })
+        }
 
         self.waitForExpectationsWithTimeout(2) { _ in }
     }
