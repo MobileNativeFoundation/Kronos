@@ -24,7 +24,7 @@
 
 import Foundation
 
-public typealias CKTimerHandler = (timer: NSTimer) -> Void
+typealias CKTimerHandler = (timer: NSTimer) -> Void
 
 /**
 Simple closure implementation on NSTimer scheduling.
