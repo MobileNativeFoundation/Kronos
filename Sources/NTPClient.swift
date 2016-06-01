@@ -82,7 +82,7 @@ final class NTPClient {
                  numberOfSamples: Int = kDefaultSamples, completion: (PDU: NTPPacket?) -> Void)
     {
         var timer: NSTimer? = nil
-        let bridgeCallback: ObjCCompletionType = { [weak self] data, destinationTime in
+        let bridgeCallback: ObjCCompletionType = { data, destinationTime in
             timer?.invalidate()
             guard let data = data, PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else {
                 return completion(PDU: nil)
@@ -91,9 +91,9 @@ final class NTPClient {
             completion(PDU: PDU.isValidResponse() ? PDU : nil)
 
             // If we still have samples left; we'll keep querying the same server
-            if numberOfSamples > 0 {
-                self?.queryIP(ip, port: port, version: version, timeout: timeout,
-                              numberOfSamples: numberOfSamples - 1, completion: completion)
+            if numberOfSamples > 1 {
+                self.queryIP(ip, port: port, version: version, timeout: timeout,
+                             numberOfSamples: numberOfSamples - 1, completion: completion)
             }
         }
 
@@ -151,6 +151,8 @@ final class NTPClient {
                 CFSocketSendData(socket, nil, data, kDefaultTimeout)
                 return
             }
+
+            CFSocketInvalidate(socket)
 
             let destinationTime = currentTime()
             let retainedClosure = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(info))
