@@ -1,7 +1,7 @@
 import Foundation
 
 private let kCopyNoOperation = unsafeBitCast(0, CFAllocatorCopyDescriptionCallBack.self)
-private let kDefaultTimeout = 5.0
+private let kDefaultTimeout = 8.0
 
 class DNSResolver {
     private var completion: ([String] -> Void)?

@@ -1,6 +1,6 @@
 import Foundation
 
-private let kDefaultTimeout = 5.0
+private let kDefaultTimeout = 6.0
 private let kDefaultSamples = 4
 private let kMaximumNTPServers = 5
 private let kMaximumResultDispersion = 10.0
@@ -61,6 +61,10 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
+            if addresses.count == 0 {
+                return progress(offset: nil, completed: 0, total: 0)
+            }
+
             let totalServers = min(addresses.count, kMaximumNTPServers)
             for address in addresses[0 ..< totalServers] {
                 queryIPAndStoreResult(address, totalServers * numberOfSamples)
@@ -83,18 +87,20 @@ final class NTPClient {
     {
         var timer: NSTimer? = nil
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
+            defer {
+                // If we still have samples left; we'll keep querying the same server
+                if numberOfSamples > 1 {
+                    self.queryIP(ip, port: port, version: version, timeout: timeout,
+                                 numberOfSamples: numberOfSamples - 1, completion: completion)
+                }
+            }
+
             timer?.invalidate()
             guard let data = data, PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else {
                 return completion(PDU: nil)
             }
 
             completion(PDU: PDU.isValidResponse() ? PDU : nil)
-
-            // If we still have samples left; we'll keep querying the same server
-            if numberOfSamples > 1 {
-                self.queryIP(ip, port: port, version: version, timeout: timeout,
-                             numberOfSamples: numberOfSamples - 1, completion: completion)
-            }
         }
 
         let callback = unsafeBitCast(bridgeCallback, AnyObject.self)
@@ -105,7 +111,7 @@ final class NTPClient {
         )
 
         timer = NSTimer.scheduledTimerWithTimeInterval(timeout) { _ in
-            completion(PDU: nil)
+            bridgeCallback(nil, NSTimeInterval.infinity)
             retainedCallback.release()
 
             if let (source, socket) = sourceAndSocket {
