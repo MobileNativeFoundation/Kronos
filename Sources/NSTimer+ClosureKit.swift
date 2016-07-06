@@ -32,29 +32,29 @@ Simple closure implementation on NSTimer scheduling.
 Example:
 
 ```swift
-NSTimer.scheduledTimerWithTimeInterval(1.0) { timer in
-println("Did something after 1s!")
+BlockTimer.scheduledTimerWithTimeInterval(1.0) { timer in
+    println("Did something after 1s!")
 }
 ```
 */
-extension NSTimer {
+final class BlockTimer: NSObject {
 
     /**
     Creates and returns a block-based NSTimer object and schedules it on the current run loop.
 
-    :param: interval  The number of seconds between firings of the timer.
-    :param: inRepeats If true, the timer will repeatedly reschedule itself until invalidated. If false,
-                      the timer will be invalidated after it fires.
-    :param: handler   The closure that the NSTimer fires.
+    - parameter: interval  The number of seconds between firings of the timer.
+    - parameter: repeated  If true, the timer will repeatedly reschedule itself until invalidated. If false,
+                           the timer will be invalidated after it fires.
+    - parameter: handler   The closure that the NSTimer fires.
 
-    :returns: a new NSTimer object, configured according to the specified parameters.
+    - returns: a new NSTimer object, configured according to the specified parameters.
     */
-    class func scheduledTimerWithTimeInterval(interval: NSTimeInterval, repeats: Bool = false,
+    class func scheduledTimerWithTimeInterval(interval: NSTimeInterval, repeated: Bool = false,
         handler: CKTimerHandler) -> NSTimer
     {
         return NSTimer.scheduledTimerWithTimeInterval(interval, target: self,
-            selector: #selector(NSTimer.invokeFromTimer(_:)),
-            userInfo: TimerClosureWrapper(handler: handler, repeats: repeats), repeats: repeats)
+            selector: #selector(BlockTimer.invokeFromTimer(_:)),
+            userInfo: TimerClosureWrapper(handler: handler, repeats: repeated), repeats: repeated)
     }
 
     // MARK: Private methods

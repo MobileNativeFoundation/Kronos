@@ -110,7 +110,7 @@ final class NTPClient {
             completion: UnsafeMutablePointer<Void>(retainedCallback.toOpaque())
         )
 
-        timer = NSTimer.scheduledTimerWithTimeInterval(timeout) { _ in
+        timer = BlockTimer.scheduledTimerWithTimeInterval(timeout) { _ in
             bridgeCallback(nil, NSTimeInterval.infinity)
             retainedCallback.release()
 
