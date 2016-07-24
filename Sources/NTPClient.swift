@@ -35,10 +35,10 @@ final class NTPClient {
                    timeout: CFTimeInterval = kDefaultTimeout,
                    progress: (offset: NSTimeInterval?, completed: Int, total: Int) -> Void)
     {
-        var servers: [String: [NTPPacket]] = [:]
+        var servers: [InternetAddress: [NTPPacket]] = [:]
         var completed: Int = 0
 
-        let queryIPAndStoreResult = { (address: String, totalQueries: Int) -> Void in
+        let queryIPAndStoreResult = { (address: InternetAddress, totalQueries: Int) -> Void in
             self.queryIP(address, port: port, version: version, timeout: timeout,
                          numberOfSamples: numberOfSamples)
             { packet in
@@ -84,8 +84,9 @@ final class NTPClient {
      - parameter numberOfSamples: The number of samples to be acquired from the server (default 4).
      - parameter completion:      A closure that will be response PDU on success or nil on error.
      */
-    func queryIP(ip: String, port: Int = 123, version: Int8 = 3, timeout: CFTimeInterval = kDefaultTimeout,
-                 numberOfSamples: Int = kDefaultSamples, completion: (PDU: NTPPacket?) -> Void)
+    func queryIP(ip: InternetAddress, port: Int = 123, version: Int8 = 3,
+                 timeout: CFTimeInterval = kDefaultTimeout, numberOfSamples: Int = kDefaultSamples,
+                 completion: (PDU: NTPPacket?) -> Void)
     {
         var timer: NSTimer? = nil
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
@@ -148,7 +149,7 @@ final class NTPClient {
 
     // MARK: - Private helpers (CFSocket)
 
-    private func sendAsyncUDPQuery(to ip: String, port: Int, timeout: NSTimeInterval,
+    private func sendAsyncUDPQuery(to ip: InternetAddress, port: Int, timeout: NSTimeInterval,
                                       completion: UnsafeMutablePointer<Void>) -> (CFRunLoopSource, CFSocket)?
     {
         let callback: CFSocketCallBack = { socket, callbackType, address, data, info in
@@ -183,19 +184,7 @@ final class NTPClient {
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopCommonModes)
 
-        CFSocketConnectToAddress(socket, self.addressDataFromIP(ip, port: port), timeout)
+        CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
         return (runLoopSource, socket)
-    }
-
-    private func addressDataFromIP(ip: String, port: Int) -> CFData {
-        var address = sockaddr_in()
-        address.sin_len = UInt8(sizeofValue(address))
-        address.sin_family = sa_family_t(AF_INET)
-        address.sin_port = in_port_t(port).bigEndian
-        inet_aton(ip, &address.sin_addr)
-
-        return withUnsafePointer(&address) { pointer -> CFData in
-            return CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(pointer), sizeofValue(address))
-        }
     }
 }
