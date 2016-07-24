@@ -5,10 +5,13 @@ struct TimeFreeze {
     private let timestamp: NSTimeInterval
     private let offset: NSTimeInterval
 
+    /// The stable timestamp adjusted by the most acurrate offset known so far.
     var adjustedTimestamp: NSTimeInterval? {
         return self.offset + self.stableTimestamp
     }
 
+    /// The stable timestamp (calculated based on the uptime); note that this doesn't have sub-seconds
+    /// precision. See `systemUptime()` for more information.
     var stableTimestamp: NSTimeInterval {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }

@@ -26,11 +26,13 @@ final class NTPClient {
      - parameter port:            Server NTP port (default 123).
      - parameter version:         NTP version to use (default 3).
      - parameter numberOfSamples: The number of samples to be acquired from each server (default 4).
+     - parameter maximumServers:  The maximum number of servers to be queried (default 5).
      - parameter timeout:         The individual timeout for each of the NTP operations.
      - parameter completion:      A closure that will be response PDU on success or nil on error.
      */
     func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
-                   numberOfSamples: Int = kDefaultSamples, timeout: CFTimeInterval = kDefaultTimeout,
+                   numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
+                   timeout: CFTimeInterval = kDefaultTimeout,
                    progress: (offset: NSTimeInterval?, completed: Int, total: Int) -> Void)
     {
         var servers: [String: [NTPPacket]] = [:]
@@ -65,7 +67,7 @@ final class NTPClient {
                 return progress(offset: nil, completed: 0, total: 0)
             }
 
-            let totalServers = min(addresses.count, kMaximumNTPServers)
+            let totalServers = min(addresses.count, maximumServers)
             for address in addresses[0 ..< totalServers] {
                 queryIPAndStoreResult(address, totalServers * numberOfSamples)
             }
