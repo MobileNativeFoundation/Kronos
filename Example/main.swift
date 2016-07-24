@@ -24,7 +24,7 @@ private struct ncurses {
     }
 }
 
-class ASCIIClock {
+final class ASCIIClock {
     private var timer: NSTimer?
 
     private func start() {

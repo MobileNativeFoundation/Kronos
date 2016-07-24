@@ -3,8 +3,8 @@ import Foundation
 private let kCopyNoOperation = unsafeBitCast(0, CFAllocatorCopyDescriptionCallBack.self)
 private let kDefaultTimeout = 8.0
 
-class DNSResolver {
-    private var completion: ([String] -> Void)?
+final class DNSResolver {
+    private var completion: ([InternetAddress] -> Void)?
     private var timer: NSTimer?
 
     private init() {}
@@ -19,7 +19,7 @@ class DNSResolver {
                              IPs.
      */
     static func resolve(host host: String, timeout: NSTimeInterval = kDefaultTimeout,
-                        completion: [String] -> Void)
+                        completion: [InternetAddress] -> Void)
     {
         let callback: CFHostClientCallBack = { host, hostinfo, error, info in
             let retainedSelf = Unmanaged<DNSResolver>.fromOpaque(COpaquePointer(info))
@@ -36,13 +36,11 @@ class DNSResolver {
 
             let IPs = (addresses.takeUnretainedValue() as NSArray)
                 .flatMap { $0 as? NSData }
-                .flatMap { data -> String? in
-                    var hostname = [CChar](count: Int(NI_MAXHOST), repeatedValue: 0)
-                    let result = getnameinfo(UnsafePointer(data.bytes), socklen_t(data.length),
-                        &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST)
+                .flatMap { data -> InternetAddress? in
+                    let socketAddress = UnsafePointer<sockaddr_storage>(data.bytes)
+                    return InternetAddress(storage: socketAddress)
+                }
 
-                    return result == 0 ? String.fromCString(hostname) : nil
-            }
             resolver.completion?(IPs)
             retainedSelf.release()
         }
@@ -83,4 +81,3 @@ class DNSResolver {
         CFHostSetClient(hostReference, nil, nil)
     }
 }
-
