@@ -1,0 +1,12 @@
+included:
+  - Sources
+disabled_rules:
+  - force_cast
+  - function_body_length
+  - opening_brance
+  - variable_name
+  - variable_name_min_length
+line_length:
+  - 110
+type_body_length:
+  - 350
