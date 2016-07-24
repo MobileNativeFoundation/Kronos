@@ -18,3 +18,15 @@ in case other modules are defining invokeFromTimer.
 ## [0.0.3](https://github.com/Reflejo/Kronos/releases/tag/0.0.3)
 
 - Make sure progress callback is called even when DNS or NTP requests time out.
+
+---
+
+## [0.0.2](https://github.com/Reflejo/Kronos/releases/tag/0.0.2)
+
+- Invalidate socket after use
+
+---
+
+## [0.0.1](https://github.com/Reflejo/Kronos/releases/tag/0.0.1)
+
+Initial release
