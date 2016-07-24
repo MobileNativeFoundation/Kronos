@@ -6,7 +6,7 @@ be affected by clock changes.
 
 ## Example app
 
-[This](https://github.com/lyft/Kronos/blob/readme/Example/main.swift) is an
+[This](https://github.com/lyft/Kronos/blob/master/Example/main.swift) is an
 example app that displays the monotonic `Clock.now` on the left and the
 system clock (initially out of date) on the right.
 
