@@ -25,6 +25,17 @@ enum InternetAddress: Hashable {
         }
     }
 
+    /// The protocol family that should be used on the socket creation for this address.
+    var family: Int32 {
+        switch self {
+            case .IPv4:
+                return PF_INET
+
+            case .IPv6:
+                return PF_INET6
+        }
+    }
+
     var hashValue: Int {
         return self.host?.hashValue ?? 0
     }
