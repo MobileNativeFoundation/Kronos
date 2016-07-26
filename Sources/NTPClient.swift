@@ -175,7 +175,7 @@ final class NTPClient {
         let types = CFSocketCallBackType.DataCallBack.rawValue | CFSocketCallBackType.WriteCallBack.rawValue
         var context = CFSocketContext(version: 0, info: completion, retain: nil, release: nil,
                                       copyDescription: nil)
-        guard let socket = CFSocketCreate(nil, PF_INET, SOCK_DGRAM, IPPROTO_UDP, types, callback, &context)
+        guard let socket = CFSocketCreate(nil, ip.family, SOCK_DGRAM, IPPROTO_UDP, types, callback, &context)
             where CFSocketIsValid(socket) else
         {
             return nil
@@ -183,7 +183,6 @@ final class NTPClient {
 
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopCommonModes)
-
         CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
         return (runLoopSource, socket)
     }
