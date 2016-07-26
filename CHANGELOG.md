@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.0](https://github.com/lyft/Kronos/releases/tag/0.1.0)
+## [0.1.1](https://github.com/lyft/Kronos/releases/tag/0.1.1)
 - Added IPv6 support
 
 ---
