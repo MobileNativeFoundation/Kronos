@@ -89,3 +89,7 @@ $ export SWIFT_EXEC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeD
 $ swift build
 ```
 
+### License
+
+Kronos is maintained by [Lyft](https://www.lyft.com/) and released under
+the Apache 2.0 license. See LICENSE for details.
