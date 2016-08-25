@@ -9,11 +9,11 @@ private let kLEDDigits: [Int32] = [
     0b1011011, 0b1011111, 0b1110000, 0b1111111, 0b1111011
 ]
 
-private struct ncurses {
+private struct Curses {
     static func clear(x x: Int32, y: Int32, width: Int32, height: Int32) {
         for x in x ..< x + width {
             for y in y ..< y + height {
-                ncurses.mvprintw(y, x, " ")
+                Curses.mvprintw(y, x, " ")
             }
         }
     }
@@ -64,7 +64,7 @@ final class ASCIIClock {
         for bit in 0 ..< 7 where (digitMask >> Int32(bit)) & 1 == 1 {
             let (yOffset, xOffset) = kPositionOffsetByBit[bit]
             let ascii = bit % 3 == 0 ? "__" : "|"
-            ncurses.mvprintw(y + yOffset, x + xOffset, ascii)
+            Curses.mvprintw(y + yOffset, x + xOffset, ascii)
         }
     }
 
@@ -74,9 +74,9 @@ final class ASCIIClock {
         let now = calendar.components([.Hour, .Minute, .Second], fromDate: NSDate())
 
         let column = getmaxx(stdscr), row = getmaxy(stdscr)
-        ncurses.mvprintw(row - 1, 0, "(q)uit, (s)ync")
+        Curses.mvprintw(row - 1, 0, "(q)uit, (s)ync")
 
-        self.drawClock(hour: now.hour, minute: now.minute, second: now.second, 
+        self.drawClock(hour: now.hour, minute: now.minute, second: now.second,
                        title: "Clock date", x: column * 2 / 3 - (kClockWidth / 2))
 
         if let date = Clock.now {
@@ -89,7 +89,7 @@ final class ASCIIClock {
     private func drawClock(hour hour: Int, minute: Int, second: Int, title: String, x: Int32) {
         let y: Int32 = getmaxy(stdscr) / 2 - 1
 
-        ncurses.clear(x: x, y: y - 1, width: Int32(kClockWidth), height: 5)
+        Curses.clear(x: x, y: y - 1, width: Int32(kClockWidth), height: 5)
         for (index, component) in [hour, minute, second].enumerate() {
             printDigit(component / 10, y: y, x: x + 9 * index)
             printDigit(component % 10, y: y, x: x + 9 * index + 4)
@@ -99,8 +99,8 @@ final class ASCIIClock {
             }
         }
 
-        ncurses.mvprintw(y - 1, x,
-                         title.stringByPaddingToLength(kClockWidth, withString: " ", startingAtIndex: 0))
+        Curses.mvprintw(y - 1, x,
+                        title.stringByPaddingToLength(kClockWidth, withString: " ", startingAtIndex: 0))
         refresh()
     }
 
