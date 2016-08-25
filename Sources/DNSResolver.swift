@@ -75,7 +75,7 @@ final class DNSResolver {
             return
         }
 
-        let hostReference = userInfo as! CFHost
+        let hostReference = unsafeBitCast(userInfo, CFHost.self)
         CFHostCancelInfoResolution(hostReference, .Addresses)
         CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetCurrent(), kCFRunLoopCommonModes)
         CFHostSetClient(hostReference, nil, nil)
