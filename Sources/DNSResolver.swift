@@ -9,15 +9,13 @@ final class DNSResolver {
 
     private init() {}
 
-    /**
-     Performs DNS lookups and calls the given completion with the answers that are returned from the name
-     server(s) that were queried.
-
-     - parameter host:       The host to be looked up.
-     - parameter timeout:    The connection timeout.
-     - parameter completion: A completion block that will be called both on failure and success with a list of
-                             IPs.
-     */
+    /// Performs DNS lookups and calls the given completion with the answers that are returned from the name
+    /// server(s) that were queried.
+    ///
+    /// - parameter host:       The host to be looked up.
+    /// - parameter timeout:    The connection timeout.
+    /// - parameter completion: A completion block that will be called both on failure and success with a list
+    ///                         of IPs.
     static func resolve(host host: String, timeout: NSTimeInterval = kDefaultTimeout,
                         completion: [InternetAddress] -> Void)
     {

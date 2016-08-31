@@ -1,16 +1,12 @@
 import Foundation
 
-/**
- Exception raised when the received PDU is invalid.
- */
+/// Exception raised when the received PDU is invalid.
 enum NTPParsingError: ErrorType {
     case InvalidNTPPDU(String)
 }
 
-/**
- The leap indicator warning of an impending leap second to be inserted or deleted in the last
- minute of the current month.
- */
+/// The leap indicator warning of an impending leap second to be inserted or deleted in the last minute of the
+/// current month.
 enum LeapIndicator: Int8 {
     case NoWarning, SixtyOneSeconds, FiftyNineSeconds, Alarm
 
@@ -29,16 +25,12 @@ enum LeapIndicator: Int8 {
     }
 }
 
-/**
- The connection mode.
- */
+/// The connection mode.
 enum Mode: Int8 {
     case Reserved, SymmetricActive, SymmetricPassive, Client, Server, Broadcast, ReservedNTP, Unknown
 }
 
-/**
- Mode representing the statrum level of the clock.
- */
+/// Mode representing the statrum level of the clock.
 enum Stratum: Int8 {
     case Unspecified, Primary, Secondary, Invalid
 
@@ -59,13 +51,11 @@ enum Stratum: Int8 {
     }
 }
 
-/**
- Server or reference clock. This value is generated based on the server stratum.
-
- - ReferenceClock:          Contains the sourceID and the description for the reference clock (stratum 1).
- - Debug(id):               Contains the kiss code for debug purposes (stratum 0).
- - ReferenceIdentifier(id): The reference identifier of the server (stratum > 1).
- */
+/// Server or reference clock. This value is generated based on the server stratum.
+///
+/// - ReferenceClock:          Contains the sourceID and the description for the reference clock (stratum 1).
+/// - Debug(id):               Contains the kiss code for debug purposes (stratum 0).
+/// - ReferenceIdentifier(id): The reference identifier of the server (stratum > 1).
 enum ClockSource {
     case ReferenceClock(id: UInt32, description: String)
     case Debug(id: UInt32)

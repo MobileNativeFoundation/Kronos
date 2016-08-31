@@ -7,11 +7,9 @@ private let kEpochDelta = 2208988800.0
 private let kMaximumDelayDifference = 0.1
 private let kMaximumDispersion = 100.0
 
-/**
- Returns the current time in decimal EPOCH timestamp format.
-
- - returns: the current time in EPOCH timestamp format.
- */
+/// Returns the current time in decimal EPOCH timestamp format.
+///
+/// - returns: The current time in EPOCH timestamp format.
 func currentTime() -> NSTimeInterval {
     var current = timeval()
     let systemTimeError = gettimeofday(&current, nil) != 0
@@ -71,13 +69,11 @@ struct NTPPacket {
     /// Time at the client when the response arrived, in EPOCH timestamp format.
     let destinationTime: NSTimeInterval
 
-    /**
-     NTP protocol package representation.
-
-     - parameter transmitTime: Packet transmission timestamp
-     - parameter version:      NTP protocol version.
-     - parameter mode:         Packet mode (client, server)
-    */
+    /// NTP protocol package representation.
+    ///
+    /// - parameter transmitTime: Packet transmission timestamp.
+    /// - parameter version:      NTP protocol version.
+    /// - parameter mode:         Packet mode (client, server).
     init(version: Int8 = 3, mode: Mode = .Client) {
         self.version = version
         self.leap = .NoWarning
@@ -94,14 +90,11 @@ struct NTPPacket {
         self.destinationTime = -1
     }
 
-    /**
-     Creates a NTP package based on a network PDU.
-
-     - parameter data:            The PDU received from the NTP call.
-     - parameter destinationTime: The time where the package arrived (client time) in EPOCH format.
-
-     - throws: NTPParsingError in case of an invalid response
-     */
+    /// Creates a NTP package based on a network PDU.
+    ///
+    /// - parameter data:            The PDU received from the NTP call.
+    /// - parameter destinationTime: The time where the package arrived (client time) in EPOCH format.
+    /// - throws:                    NTPParsingError in case of an invalid response.
     init(data: NSData, destinationTime: NSTimeInterval) throws {
         if data.length < 48 {
             throw NTPParsingError.InvalidNTPPDU("Invalid PDU length: \(data.length)")
@@ -123,11 +116,9 @@ struct NTPPacket {
         self.destinationTime = destinationTime
     }
 
-    /**
-     Convert this NTPPacket to a buffer that can be sent over a socket.
-
-     - returns: a bytes buffer representing this packet
-    */
+    /// Convert this NTPPacket to a buffer that can be sent over a socket.
+    ///
+    /// - returns: A bytes buffer representing this packet.
     mutating func prepareToSend(transmitTime transmitTime: NSTimeInterval? = nil) -> NSData {
         let data = NSMutableData()
         data.append(byte: self.leap.rawValue << 6 | self.version << 3 | self.mode.rawValue)
@@ -146,11 +137,9 @@ struct NTPPacket {
         return data
     }
 
-    /**
-     Checks properties to make sure that the received PDU is a valid response that we can use.
-
-     - returns: a boolean indicating if the response is valid for the given version.
-     */
+    /// Checks properties to make sure that the received PDU is a valid response that we can use.
+    ///
+    /// - returns: A boolean indicating if the response is valid for the given version.
     func isValidResponse() -> Bool {
         return (self.mode == .Server || self.mode == .SymmetricPassive) && self.leap != .Alarm
             && self.stratum != .Invalid && self.stratum != .Unspecified
@@ -185,20 +174,18 @@ struct NTPPacket {
     }
 }
 
-/**
- From RFC 2030 (with a correction to the delay math):
-
- Timestamp Name          ID   When Generated
- ------------------------------------------------------------
- Originate Timestamp     T1   time request sent by client
- Receive Timestamp       T2   time request received by server
- Transmit Timestamp      T3   time reply sent by server
- Destination Timestamp   T4   time reply received by client
-
- The roundtrip delay d and local clock offset t are defined as
-
- d = (T4 - T1) - (T3 - T2)     t = ((T2 - T1) + (T3 - T4)) / 2.
- */
+/// From RFC 2030 (with a correction to the delay math):
+///
+/// Timestamp Name          ID   When Generated
+/// ------------------------------------------------------------
+/// Originate Timestamp     T1   time request sent by client
+/// Receive Timestamp       T2   time request received by server
+/// Transmit Timestamp      T3   time reply sent by server
+/// Destination Timestamp   T4   time reply received by client
+///
+/// The roundtrip delay d and local clock offset t are defined as
+///
+/// d = (T4 - T1) - (T3 - T2)     t = ((T2 - T1) + (T3 - T4)) / 2.
 extension NTPPacket {
 
     /// Clocks offset in seconds.

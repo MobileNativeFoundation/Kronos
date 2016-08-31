@@ -22,16 +22,14 @@ struct TimeFreeze {
         self.uptime = TimeFreeze.systemUptime()
     }
 
-    /**
-     Returns a high-resolution measurement of system uptime, that continues ticking
-     through device sleep *and* user- or system-generated clock adjustments. This
-     allows for stable differences to be calculated between timestamps.
-
-     Note: Due to an issue in BSD/darwin, sub-second precision will be lost; see:
-           https://github.com/darwin-on-arm/xnu/blob/master/osfmk/kern/clock.c#L522
-
-     - returns: an Int measurement of system uptime in microseconds.
-     */
+    /// Returns a high-resolution measurement of system uptime, that continues ticking through device sleep
+    /// *and* user- or system-generated clock adjustments. This allows for stable differences to be calculated
+    /// between timestamps.
+    ///
+    /// Note: Due to an issue in BSD/darwin, sub-second precision will be lost;
+    /// see: https://github.com/darwin-on-arm/xnu/blob/master/osfmk/kern/clock.c#L522.
+    ///
+    /// - returns: An Int measurement of system uptime in microseconds.
     static func systemUptime() -> NSTimeInterval {
         var mib = [CTL_KERN, KERN_BOOTTIME]
         var size = strideof(timeval)

@@ -1,11 +1,9 @@
 import Foundation
 
-/**
- This enum represents an internet address that can either be IPv4 or IPv6.
-
- - IPv6: An Internet Address of type IPv6 (e.g.: '::1')
- - IPv4: An Internet Address of type IPv4 (e.g.: '127.0.0.1')
- */
+/// This enum represents an internet address that can either be IPv4 or IPv6.
+///
+/// - IPv6: An Internet Address of type IPv6 (e.g.: '::1').
+/// - IPv4: An Internet Address of type IPv4 (e.g.: '127.0.0.1').
 enum InternetAddress: Hashable {
     case IPv6(sockaddr_in6)
     case IPv4(sockaddr_in)
@@ -59,13 +57,11 @@ enum InternetAddress: Hashable {
         }
     }
 
-    /**
-     Returns the address struct (either sockaddr_in or sockaddr_in6) represented as an CFData.
-
-     - parameter port: The port number to associate on the address struct.
-
-     - returns: An address struct wrapped into a CFData type.
-     */
+    /// Returns the address struct (either sockaddr_in or sockaddr_in6) represented as an CFData.
+    ///
+    /// - parameter port: The port number to associate on the address struct.
+    ///
+    /// - returns: An address struct wrapped into a CFData type.
     func addressData(withPort port: Int) -> CFData {
         switch self {
             case IPv6(var address):
@@ -83,9 +79,7 @@ enum InternetAddress: Hashable {
     }
 }
 
-/**
- Compare InternetAddress(es) by making sure the host representation are equal.
- */
+/// Compare InternetAddress(es) by making sure the host representation are equal.
 func == (lhs: InternetAddress, rhs: InternetAddress) -> Bool {
     return lhs.host == rhs.host
 }

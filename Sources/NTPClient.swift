@@ -7,29 +7,23 @@ private let kMaximumResultDispersion = 10.0
 
 private typealias ObjCCompletionType = @convention(block) (NSData?, NSTimeInterval) -> Void
 
-/**
- Exception raised while sending / receiving NTP packets.
- */
+/// Exception raised while sending / receiving NTP packets.
 enum NTPNetworkError: ErrorType {
     case NoValidNTPPacketFound
 }
 
-/**
- NTP client session.
- */
+/// NTP client session.
 final class NTPClient {
 
-    /**
-     Query the all ips that resolve from the given pool.
-
-     - parameter pool:            NTP pool that will be resolved into multiple NTP servers.
-     - parameter port:            Server NTP port (default 123).
-     - parameter version:         NTP version to use (default 3).
-     - parameter numberOfSamples: The number of samples to be acquired from each server (default 4).
-     - parameter maximumServers:  The maximum number of servers to be queried (default 5).
-     - parameter timeout:         The individual timeout for each of the NTP operations.
-     - parameter completion:      A closure that will be response PDU on success or nil on error.
-     */
+    /// Query the all ips that resolve from the given pool.
+    ///
+    /// - parameter pool:            NTP pool that will be resolved into multiple NTP servers.
+    /// - parameter port:            Server NTP port (default 123).
+    /// - parameter version:         NTP version to use (default 3).
+    /// - parameter numberOfSamples: The number of samples to be acquired from each server (default 4).
+    /// - parameter maximumServers:  The maximum number of servers to be queried (default 5).
+    /// - parameter timeout:         The individual timeout for each of the NTP operations.
+    /// - parameter completion:      A closure that will be response PDU on success or nil on error.
     func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
                    numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
                    timeout: CFTimeInterval = kDefaultTimeout,
@@ -74,16 +68,14 @@ final class NTPClient {
         }
     }
 
-    /**
-     Query the given ntp server for the time exchange.
-
-     - parameter ip:              Server socket address.
-     - parameter port:            Server NTP port (default 123).
-     - parameter version:         NTP version to use (default 3).
-     - parameter timeout:         Timeout on socket operations.
-     - parameter numberOfSamples: The number of samples to be acquired from the server (default 4).
-     - parameter completion:      A closure that will be response PDU on success or nil on error.
-     */
+    /// Query the given ntp server for the time exchange.
+    ///
+    /// - parameter ip:              Server socket address.
+    /// - parameter port:            Server NTP port (default 123).
+    /// - parameter version:         NTP version to use (default 3).
+    /// - parameter timeout:         Timeout on socket operations.
+    /// - parameter numberOfSamples: The number of samples to be acquired from the server (default 4).
+    /// - parameter completion:      A closure that will be response PDU on success or nil on error.
     func queryIP(ip: InternetAddress, port: Int = 123, version: Int8 = 3,
                  timeout: CFTimeInterval = kDefaultTimeout, numberOfSamples: Int = kDefaultSamples,
                  completion: (PDU: NTPPacket?) -> Void)
