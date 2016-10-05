@@ -9,33 +9,34 @@ final class ClockTests: XCTestCase {
     }
 
     func testFirst() {
-        let expectation = self.expectationWithDescription("Clock sync calls first closure")
+        let expectation = self.expectation(description: "Clock sync calls first closure")
         Clock.sync(first: { date, _ in
             XCTAssertNotNil(date)
             expectation.fulfill()
         })
 
-        self.waitForExpectationsWithTimeout(2) { _ in }
+        self.waitForExpectations(timeout: 2) { _ in }
     }
 
     func testLast() {
-        let expectation = self.expectationWithDescription("Clock sync calls last closure")
+        let expectation = self.expectation(description: "Clock sync calls last closure")
         Clock.sync(completion: { date, offset in
             XCTAssertNotNil(date)
             XCTAssertNotNil(offset)
             expectation.fulfill()
         })
 
-        self.waitForExpectationsWithTimeout(10) { _ in }
+        self.waitForExpectations(timeout: 10) { _ in }
     }
 
     func testBoth() {
-        let firstExpectation = self.expectationWithDescription("Clock sync calls first closure")
-        let lastExpectation = self.expectationWithDescription("Clock sync calls last closure")
+        let firstExpectation = self.expectation(description: "Clock sync calls first closure")
+        let lastExpectation = self.expectation(description: "Clock sync calls last closure")
         Clock.sync(
-            completion: { _ in firstExpectation.fulfill() },
-            first: { _ in lastExpectation.fulfill() })
+            first: { _ in lastExpectation.fulfill() },
+            completion: { _ in firstExpectation.fulfill() })
 
-        self.waitForExpectationsWithTimeout(10) { _ in }
+
+        self.waitForExpectations(timeout: 10) { _ in }
     }
 }

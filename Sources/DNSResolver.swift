@@ -1,11 +1,11 @@
 import Foundation
 
-private let kCopyNoOperation = unsafeBitCast(0, CFAllocatorCopyDescriptionCallBack.self)
+private let kCopyNoOperation = unsafeBitCast(0, to: CFAllocatorCopyDescriptionCallBack.self)
 private let kDefaultTimeout = 8.0
 
 final class DNSResolver {
-    private var completion: ([InternetAddress] -> Void)?
-    private var timer: NSTimer?
+    private var completion: (([InternetAddress]) -> Void)?
+    private var timer: Timer?
 
     private init() {}
 
@@ -16,17 +16,20 @@ final class DNSResolver {
     /// - parameter timeout:    The connection timeout.
     /// - parameter completion: A completion block that will be called both on failure and success with a list
     ///                         of IPs.
-    static func resolve(host host: String, timeout: NSTimeInterval = kDefaultTimeout,
-                        completion: [InternetAddress] -> Void)
+    static func resolve(host: String, timeout: TimeInterval = kDefaultTimeout,
+                        completion: @escaping ([InternetAddress]) -> Void)
     {
         let callback: CFHostClientCallBack = { host, hostinfo, error, info in
-            let retainedSelf = Unmanaged<DNSResolver>.fromOpaque(COpaquePointer(info))
+            guard let info = info else {
+                return
+            }
+            let retainedSelf = Unmanaged<DNSResolver>.fromOpaque(info)
             let resolver = retainedSelf.takeUnretainedValue()
             resolver.timer?.invalidate()
             resolver.timer = nil
 
             var resolved: DarwinBoolean = false
-            guard let addresses = CFHostGetAddressing(host, &resolved) where resolved else {
+            guard let addresses = CFHostGetAddressing(host, &resolved), resolved.boolValue else {
                 resolver.completion?([])
                 retainedSelf.release()
                 return
@@ -35,7 +38,8 @@ final class DNSResolver {
             let IPs = (addresses.takeUnretainedValue() as NSArray)
                 .flatMap { $0 as? NSData }
                 .flatMap { data -> InternetAddress? in
-                    let socketAddress = UnsafePointer<sockaddr_storage>(data.bytes)
+                    let socketAddress = data.bytes.bindMemory(to: sockaddr_storage.self,
+                                                              capacity: data.length)
                     return InternetAddress(storage: socketAddress)
                 }
 
@@ -47,17 +51,17 @@ final class DNSResolver {
         resolver.completion = completion
 
         let retainedClosure = Unmanaged.passRetained(resolver).toOpaque()
-        var clientContext = CFHostClientContext(version: 0, info: UnsafeMutablePointer<Void>(retainedClosure),
+        var clientContext = CFHostClientContext(version: 0, info: UnsafeMutableRawPointer(retainedClosure),
                                                 retain: nil, release: nil, copyDescription: kCopyNoOperation)
 
-        let hostReference = CFHostCreateWithName(kCFAllocatorDefault, host).takeUnretainedValue()
+        let hostReference = CFHostCreateWithName(kCFAllocatorDefault, host as CFString).takeUnretainedValue()
         CFHostSetClient(hostReference, callback, &clientContext)
-        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), kCFRunLoopCommonModes)
-        CFHostStartInfoResolution(hostReference, .Addresses, nil)
+        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
+        CFHostStartInfoResolution(hostReference, .addresses, nil)
 
-        resolver.timer = NSTimer.scheduledTimerWithTimeInterval(timeout, target: resolver,
-                                                                selector: #selector(DNSResolver.onTimeout),
-                                                                userInfo: hostReference, repeats: false)
+        resolver.timer = Timer.scheduledTimer(timeInterval: timeout, target: resolver,
+                                              selector: #selector(DNSResolver.onTimeout),
+                                              userInfo: hostReference, repeats: false)
     }
 
     @objc
@@ -73,9 +77,9 @@ final class DNSResolver {
             return
         }
 
-        let hostReference = unsafeBitCast(userInfo, CFHost.self)
-        CFHostCancelInfoResolution(hostReference, .Addresses)
-        CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetCurrent(), kCFRunLoopCommonModes)
+        let hostReference = unsafeBitCast(userInfo, to: CFHost.self)
+        CFHostCancelInfoResolution(hostReference, .addresses)
+        CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
         CFHostSetClient(hostReference, nil, nil)
     }
 }

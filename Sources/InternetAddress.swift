@@ -5,31 +5,31 @@ import Foundation
 /// - IPv6: An Internet Address of type IPv6 (e.g.: '::1').
 /// - IPv4: An Internet Address of type IPv4 (e.g.: '127.0.0.1').
 enum InternetAddress: Hashable {
-    case IPv6(sockaddr_in6)
-    case IPv4(sockaddr_in)
+    case ipv6(sockaddr_in6)
+    case ipv4(sockaddr_in)
 
     /// Human readable host represetnation (e.g. '192.168.1.1' or 'ab:ab:ab:ab:ab:ab:ab:ab').
     var host: String? {
         switch self {
-            case IPv6(var address):
-                var buffer = [CChar](count: Int(INET6_ADDRSTRLEN), repeatedValue: 0)
+            case .ipv6(var address):
+                var buffer = [CChar](repeating: 0, count: Int(INET6_ADDRSTRLEN))
                 inet_ntop(AF_INET6, &address.sin6_addr, &buffer, socklen_t(INET6_ADDRSTRLEN))
-                return String.fromCString(buffer)
+                return String(cString: buffer)
 
-            case IPv4(var address):
-                var buffer = [CChar](count: Int(INET_ADDRSTRLEN), repeatedValue: 0)
+            case .ipv4(var address):
+                var buffer = [CChar](repeating: 0, count: Int(INET_ADDRSTRLEN))
                 inet_ntop(AF_INET, &address.sin_addr, &buffer, socklen_t(INET_ADDRSTRLEN))
-                return String.fromCString(buffer)
+                return String(cString: buffer)
         }
     }
 
     /// The protocol family that should be used on the socket creation for this address.
     var family: Int32 {
         switch self {
-            case .IPv4:
+            case .ipv4:
                 return PF_INET
 
-            case .IPv6:
+            case .ipv6:
                 return PF_INET6
         }
     }
@@ -39,19 +39,17 @@ enum InternetAddress: Hashable {
     }
 
     init?(storage: UnsafePointer<sockaddr_storage>) {
-        if storage == nil {
-            return nil
-        }
 
-        switch Int32(storage.memory.ss_family) {
+        switch Int32(storage.pointee.ss_family) {
             case AF_INET:
-                let address = UnsafeMutablePointer<sockaddr_in>(storage)
-                self = IPv4(address.memory)
+                self = storage.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { address in
+                    InternetAddress.ipv4(address.pointee)
+                }
 
             case AF_INET6:
-                let address = UnsafeMutablePointer<sockaddr_in6>(storage)
-                self = IPv6(address.memory)
-
+                self = storage.withMemoryRebound(to: sockaddr_in6.self, capacity: 1) { address in
+                    InternetAddress.ipv6(address.pointee)
+                }
             default:
                 return nil
         }
@@ -64,17 +62,13 @@ enum InternetAddress: Hashable {
     /// - returns: An address struct wrapped into a CFData type.
     func addressData(withPort port: Int) -> CFData {
         switch self {
-            case IPv6(var address):
+            case .ipv6(var address):
                 address.sin6_port = in_port_t(port).bigEndian
-                return withUnsafePointer(&address) { pointer -> CFData in
-                    CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(pointer), sizeofValue(address))
-                }
+                return NSData(bytes: &address, length: MemoryLayout<sockaddr_in6>.size) as CFData
 
-            case IPv4(var address):
+            case .ipv4(var address):
                 address.sin_port = in_port_t(port).bigEndian
-                return withUnsafePointer(&address) { pointer -> CFData in
-                    CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(pointer), sizeofValue(address))
-                }
+                return NSData(bytes: &address, length: MemoryLayout<sockaddr_in>.size) as CFData
         }
     }
 }

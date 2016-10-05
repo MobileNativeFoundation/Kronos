@@ -20,9 +20,9 @@ final class NTPPacketTests: XCTestCase {
                                   "b38bab46dae2d32bb38d9e00")!
         let PDU = try? NTPPacket(data: network, destinationTime: 0)
         XCTAssertEqual(PDU?.version, 3)
-        XCTAssertEqual(PDU?.leap, LeapIndicator.NoWarning)
-        XCTAssertEqual(PDU?.mode, Mode.Server)
-        XCTAssertEqual(PDU?.stratum, Stratum.Secondary)
+        XCTAssertEqual(PDU?.leap, LeapIndicator.noWarning)
+        XCTAssertEqual(PDU?.mode, Mode.server)
+        XCTAssertEqual(PDU?.stratum, Stratum.secondary)
         XCTAssertEqual(PDU?.poll, 3)
         XCTAssertEqual(PDU?.precision, -23)
     }

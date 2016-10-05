@@ -19,13 +19,13 @@ public struct Clock {
     private static var stableTime: TimeFreeze?
 
     /// The most accurate timestamp that we have so far (nil if no synchronization was done yet)
-    public static var timestamp: NSTimeInterval? {
+    public static var timestamp: TimeInterval? {
         return self.stableTime?.adjustedTimestamp
     }
 
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
-    public static var now: NSDate? {
-        return self.timestamp.map { NSDate(timeIntervalSince1970: $0) }
+    public static var now: Date? {
+        return self.timestamp.map { Date(timeIntervalSince1970: $0) }
     }
 
     /// Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given
@@ -39,22 +39,22 @@ public struct Clock {
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:      A closure that will be called after the first valid date is calculated.
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            first: ((date: NSDate, offset: NSTimeInterval) -> Void)? = nil,
-                            completion: ((date: NSDate?, offset: NSTimeInterval?) -> Void)? = nil)
+                            first: ((Date, TimeInterval) -> Void)? = nil,
+                            completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
         self.reset()
 
-        NTPClient().queryPool(pool, numberOfSamples: samples) { offset, done, total in
+        NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
             if let offset = offset {
                 self.stableTime = TimeFreeze(offset: offset)
 
                 if done == 1, let now = self.now {
-                    first?(date: now, offset: offset)
+                    first?(now, offset)
                 }
             }
 
             if done == total {
-                completion?(date: self.now, offset: offset)
+                completion?(self.now, offset)
             }
         }
     }

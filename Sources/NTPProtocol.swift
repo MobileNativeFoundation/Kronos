@@ -1,25 +1,25 @@
 import Foundation
 
 /// Exception raised when the received PDU is invalid.
-enum NTPParsingError: ErrorType {
-    case InvalidNTPPDU(String)
+enum NTPParsingError: Error {
+    case invalidNTPPDU(String)
 }
 
 /// The leap indicator warning of an impending leap second to be inserted or deleted in the last minute of the
 /// current month.
 enum LeapIndicator: Int8 {
-    case NoWarning, SixtyOneSeconds, FiftyNineSeconds, Alarm
+    case noWarning, sixtyOneSeconds, fiftyNineSeconds, alarm
 
     /// Human readable value of the leap warning.
     var description: String {
         switch self {
-            case NoWarning:
+            case .noWarning:
                return "No warning"
-            case SixtyOneSeconds:
+            case .sixtyOneSeconds:
                return "Last minute of the day has 61 seconds"
-            case FiftyNineSeconds:
+            case .fiftyNineSeconds:
                return "Last minute of the day has 59 seconds"
-            case Alarm:
+            case .alarm:
                return "Unknown (clock unsynchronized)"
         }
     }
@@ -27,26 +27,26 @@ enum LeapIndicator: Int8 {
 
 /// The connection mode.
 enum Mode: Int8 {
-    case Reserved, SymmetricActive, SymmetricPassive, Client, Server, Broadcast, ReservedNTP, Unknown
+    case reserved, symmetricActive, symmetricPassive, client, server, broadcast, reservedNTP, unknown
 }
 
 /// Mode representing the statrum level of the clock.
 enum Stratum: Int8 {
-    case Unspecified, Primary, Secondary, Invalid
+    case unspecified, primary, secondary, invalid
 
     init(value: Int8) {
         switch value {
             case 0:
-                self = Unspecified
+                self = .unspecified
 
             case 1:
-                self = Primary
+                self = .primary
 
             case 0 ..< 15:
-                self = Secondary
+                self = .secondary
 
             default:
-                self = Invalid
+                self = .invalid
         }
     }
 }
@@ -57,34 +57,34 @@ enum Stratum: Int8 {
 /// - Debug(id):               Contains the kiss code for debug purposes (stratum 0).
 /// - ReferenceIdentifier(id): The reference identifier of the server (stratum > 1).
 enum ClockSource {
-    case ReferenceClock(id: UInt32, description: String)
-    case Debug(id: UInt32)
-    case ReferenceIdentifier(id: UInt32)
+    case referenceClock(id: UInt32, description: String)
+    case debug(id: UInt32)
+    case referenceIdentifier(id: UInt32)
 
     init(stratum: Stratum, sourceID: UInt32) {
         switch stratum {
-            case .Unspecified:
-                self = Debug(id: sourceID)
+            case .unspecified:
+                self = .debug(id: sourceID)
 
-            case .Primary:
+            case .primary:
                 let (id, description) = ClockSource.description(fromID: sourceID)
-                self = ReferenceClock(id: id, description: description)
+                self = .referenceClock(id: id, description: description)
 
-            case .Secondary, .Invalid:
-                self = ReferenceIdentifier(id: sourceID)
+            case .secondary, .invalid:
+                self = .referenceIdentifier(id: sourceID)
         }
     }
 
     /// The id for the reference clock (IANA, stratum 1), debug (stratum 0) or referenceIdentifier
     var ID: UInt32 {
         switch self {
-            case ReferenceClock(let id, _):
+            case .referenceClock(let id, _):
                 return id
 
-            case Debug(let id):
+            case .debug(let id):
                 return id
 
-            case ReferenceIdentifier(let id):
+            case .referenceIdentifier(let id):
                 return id
         }
     }
