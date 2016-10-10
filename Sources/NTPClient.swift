@@ -5,11 +5,11 @@ private let kDefaultSamples = 4
 private let kMaximumNTPServers = 5
 private let kMaximumResultDispersion = 10.0
 
-private typealias ObjCCompletionType = @convention(block) (NSData?, NSTimeInterval) -> Void
+private typealias ObjCCompletionType = @convention(block) (NSData?, TimeInterval) -> Void
 
 /// Exception raised while sending / receiving NTP packets.
-enum NTPNetworkError: ErrorType {
-    case NoValidNTPPacketFound
+enum NTPNetworkError: Error {
+    case noValidNTPPacketFound
 }
 
 /// NTP client session.
@@ -24,24 +24,23 @@ final class NTPClient {
     /// - parameter maximumServers:  The maximum number of servers to be queried (default 5).
     /// - parameter timeout:         The individual timeout for each of the NTP operations.
     /// - parameter completion:      A closure that will be response PDU on success or nil on error.
-    func queryPool(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
+    func query(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
                    numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
                    timeout: CFTimeInterval = kDefaultTimeout,
-                   progress: (offset: NSTimeInterval?, completed: Int, total: Int) -> Void)
+                   progress: @escaping (TimeInterval?, Int, Int) -> Void)
     {
         var servers: [InternetAddress: [NTPPacket]] = [:]
         var completed: Int = 0
 
         let queryIPAndStoreResult = { (address: InternetAddress, totalQueries: Int) -> Void in
-            self.queryIP(address, port: port, version: version, timeout: timeout,
+            self.query(ip: address, port: port, version: version, timeout: timeout,
                          numberOfSamples: numberOfSamples)
             { packet in
                 defer {
                     completed += 1
 
                     let responses = Array(servers.values)
-                    progress(offset: try? self.offsetFromResponses(responses),
-                             completed: completed, total: totalQueries)
+                    progress(try? self.offset(from: responses), completed, totalQueries)
                 }
 
                 guard let PDU = packet else {
@@ -58,7 +57,7 @@ final class NTPClient {
 
         DNSResolver.resolve(host: pool) { addresses in
             if addresses.count == 0 {
-                return progress(offset: nil, completed: 0, total: 0)
+                return progress(nil, 0, 0)
             }
 
             let totalServers = min(addresses.count, maximumServers)
@@ -76,55 +75,57 @@ final class NTPClient {
     /// - parameter timeout:         Timeout on socket operations.
     /// - parameter numberOfSamples: The number of samples to be acquired from the server (default 4).
     /// - parameter completion:      A closure that will be response PDU on success or nil on error.
-    func queryIP(ip: InternetAddress, port: Int = 123, version: Int8 = 3,
-                 timeout: CFTimeInterval = kDefaultTimeout, numberOfSamples: Int = kDefaultSamples,
-                 completion: (PDU: NTPPacket?) -> Void)
+    func query(ip: InternetAddress, port: Int = 123, version: Int8 = 3,
+               timeout: CFTimeInterval = kDefaultTimeout, numberOfSamples: Int = kDefaultSamples,
+               completion: @escaping (NTPPacket?) -> Void)
     {
-        var timer: NSTimer? = nil
+        var timer: Timer? = nil
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
             defer {
                 // If we still have samples left; we'll keep querying the same server
                 if numberOfSamples > 1 {
-                    self.queryIP(ip, port: port, version: version, timeout: timeout,
-                                 numberOfSamples: numberOfSamples - 1, completion: completion)
+                    self.query(ip: ip, port: port, version: version, timeout: timeout,
+                               numberOfSamples: numberOfSamples - 1, completion: completion)
                 }
             }
 
             timer?.invalidate()
-            guard let data = data, PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else {
-                return completion(PDU: nil)
+            guard
+                let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else
+            {
+                return completion(nil)
             }
 
-            completion(PDU: PDU.isValidResponse() ? PDU : nil)
+            completion(PDU.isValidResponse() ? PDU : nil)
         }
 
-        let callback = unsafeBitCast(bridgeCallback, AnyObject.self)
+        let callback = unsafeBitCast(bridgeCallback, to: AnyObject.self)
         let retainedCallback = Unmanaged.passRetained(callback)
         let sourceAndSocket = self.sendAsyncUDPQuery(
             to: ip, port: port, timeout: timeout,
-            completion: UnsafeMutablePointer<Void>(retainedCallback.toOpaque())
+            completion: UnsafeMutableRawPointer(retainedCallback.toOpaque())
         )
 
-        timer = BlockTimer.scheduledTimerWithTimeInterval(timeout) { _ in
-            bridgeCallback(nil, NSTimeInterval.infinity)
+        timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: true) { _ in
+            bridgeCallback(nil, TimeInterval.infinity)
             retainedCallback.release()
 
             if let (source, socket) = sourceAndSocket {
                 CFSocketInvalidate(socket)
-                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, kCFRunLoopCommonModes)
+                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, CFRunLoopMode.commonModes)
             }
         }
     }
 
     // MARK: - Private helpers (NTP Calculation)
 
-    private func offsetFromResponses(responses: [[NTPPacket]]) throws -> NSTimeInterval {
+    private func offset(from responses: [[NTPPacket]]) throws -> TimeInterval {
         let now = currentTime()
         var bestResponses: [NTPPacket] = []
         for serverResponses in responses {
             let filtered = serverResponses
                 .filter { abs($0.originTime - now) < kMaximumResultDispersion }
-                .minElement { $0.delay < $1.delay }
+                .min { $0.delay < $1.delay }
 
             if let filtered = filtered {
                 bestResponses.append(filtered)
@@ -132,50 +133,56 @@ final class NTPClient {
         }
 
         if bestResponses.count == 0 {
-            throw NTPNetworkError.NoValidNTPPacketFound
+            throw NTPNetworkError.noValidNTPPacketFound
         }
 
-        bestResponses.sortInPlace { $0.offset < $1.offset }
+        bestResponses.sort { $0.offset < $1.offset }
         return bestResponses[bestResponses.count / 2].offset
     }
 
     // MARK: - Private helpers (CFSocket)
 
-    private func sendAsyncUDPQuery(to ip: InternetAddress, port: Int, timeout: NSTimeInterval,
-                                      completion: UnsafeMutablePointer<Void>) -> (CFRunLoopSource, CFSocket)?
+    private func sendAsyncUDPQuery(to ip: InternetAddress, port: Int, timeout: TimeInterval,
+                                   completion: UnsafeMutableRawPointer) -> (CFRunLoopSource, CFSocket)?
     {
         let callback: CFSocketCallBack = { socket, callbackType, address, data, info in
-            if callbackType == .WriteCallBack {
+            if callbackType == .writeCallBack {
                 var packet = NTPPacket()
                 let PDU = packet.prepareToSend()
-                let data = CFDataCreate(kCFAllocatorDefault, UnsafePointer<UInt8>(PDU.bytes), PDU.length)
+                let data = CFDataCreate(kCFAllocatorDefault,
+                                        PDU.bytes.bindMemory(to: UInt8.self, capacity: PDU.length),
+                                        PDU.length)
                 CFSocketSendData(socket, nil, data, kDefaultTimeout)
+                return
+            }
+
+            guard let info = info else {
                 return
             }
 
             CFSocketInvalidate(socket)
 
             let destinationTime = currentTime()
-            let retainedClosure = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(info))
-            let completion = unsafeBitCast(retainedClosure.takeUnretainedValue(), ObjCCompletionType.self)
+            let retainedClosure = Unmanaged<AnyObject>.fromOpaque(info)
+            let completion = unsafeBitCast(retainedClosure.takeUnretainedValue(), to: ObjCCompletionType.self)
 
-            let data = unsafeBitCast(data, CFDataRef.self) as NSData?
+            let data = unsafeBitCast(data, to: CFData.self) as NSData?
             completion(data, destinationTime)
             retainedClosure.release()
         }
 
-        let types = CFSocketCallBackType.DataCallBack.rawValue | CFSocketCallBackType.WriteCallBack.rawValue
+        let types = CFSocketCallBackType.dataCallBack.rawValue | CFSocketCallBackType.writeCallBack.rawValue
         var context = CFSocketContext(version: 0, info: completion, retain: nil, release: nil,
                                       copyDescription: nil)
-        guard let socket = CFSocketCreate(nil, ip.family, SOCK_DGRAM, IPPROTO_UDP, types, callback, &context)
-            where CFSocketIsValid(socket) else
+        guard let socket = CFSocketCreate(nil, ip.family, SOCK_DGRAM, IPPROTO_UDP, types, callback, &context),
+            CFSocketIsValid(socket) else
         {
             return nil
         }
 
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
-        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopCommonModes)
+        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, CFRunLoopMode.commonModes)
         CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
-        return (runLoopSource, socket)
+        return (runLoopSource!, socket)
     }
 }

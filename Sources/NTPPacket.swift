@@ -10,7 +10,7 @@ private let kMaximumDispersion = 100.0
 /// Returns the current time in decimal EPOCH timestamp format.
 ///
 /// - returns: The current time in EPOCH timestamp format.
-func currentTime() -> NSTimeInterval {
+func currentTime() -> TimeInterval {
     var current = timeval()
     let systemTimeError = gettimeofday(&current, nil) != 0
     assert(!systemTimeError, "system clock error: system time unavailable")
@@ -46,44 +46,44 @@ struct NTPPacket {
     /// bits 15 and 16. Note that this variable can take on both positive and negative values, depending on
     /// the relative time and frequency errors. The values that normally appear in this field range from
     /// negative values of a few milliseconds to positive values of several hundred milliseconds.
-    let rootDelay: NSTimeInterval
+    let rootDelay: TimeInterval
 
     /// Total dispersion to the reference clock, in EPOCH.
-    let rootDispersion: NSTimeInterval
+    let rootDispersion: TimeInterval
 
     /// Server or reference clock. This value is generated based on a reference identifier maintained by IANA.
     let clockSource: ClockSource
 
     /// Time when the system clock was last set or corrected, in EPOCH timestamp format.
-    let referenceTime: NSTimeInterval
+    let referenceTime: TimeInterval
 
     /// Time at the client when the request departed for the server, in EPOCH timestamp format.
-    let originTime: NSTimeInterval
+    let originTime: TimeInterval
 
     /// Time at the server when the request arrived from the client, in EPOCH timestamp format.
-    let receiveTime: NSTimeInterval
+    let receiveTime: TimeInterval
 
     /// Time at the server when the response left for the client, in EPOCH timestamp format.
-    var transmitTime: NSTimeInterval = 0.0
+    var transmitTime: TimeInterval = 0.0
 
     /// Time at the client when the response arrived, in EPOCH timestamp format.
-    let destinationTime: NSTimeInterval
+    let destinationTime: TimeInterval
 
     /// NTP protocol package representation.
     ///
     /// - parameter transmitTime: Packet transmission timestamp.
     /// - parameter version:      NTP protocol version.
     /// - parameter mode:         Packet mode (client, server).
-    init(version: Int8 = 3, mode: Mode = .Client) {
+    init(version: Int8 = 3, mode: Mode = .client) {
         self.version = version
-        self.leap = .NoWarning
+        self.leap = .noWarning
         self.mode = mode
-        self.stratum = .Unspecified
+        self.stratum = .unspecified
         self.poll = 4
         self.precision = -6
         self.rootDelay = 1
         self.rootDispersion = 1
-        self.clockSource = .ReferenceIdentifier(id: 0)
+        self.clockSource = .referenceIdentifier(id: 0)
         self.referenceTime = -kEpochDelta
         self.originTime = -kEpochDelta
         self.receiveTime = -kEpochDelta
@@ -95,31 +95,31 @@ struct NTPPacket {
     /// - parameter data:            The PDU received from the NTP call.
     /// - parameter destinationTime: The time where the package arrived (client time) in EPOCH format.
     /// - throws:                    NTPParsingError in case of an invalid response.
-    init(data: NSData, destinationTime: NSTimeInterval) throws {
+    init(data: NSData, destinationTime: TimeInterval) throws {
         if data.length < 48 {
-            throw NTPParsingError.InvalidNTPPDU("Invalid PDU length: \(data.length)")
+            throw NTPParsingError.invalidNTPPDU("Invalid PDU length: \(data.length)")
         }
 
-        self.leap = LeapIndicator(rawValue: (data.getByte(atIndex: 0) >> 6) & 0b11) ?? .NoWarning
-        self.version = data.getByte(atIndex: 0) >> 3 & 0b111
-        self.mode = Mode(rawValue: data.getByte(atIndex: 0) & 0b111) ?? .Unknown
-        self.stratum = Stratum(value: data.getByte(atIndex: 1))
-        self.poll = data.getByte(atIndex: 2)
-        self.precision = data.getByte(atIndex: 3)
-        self.rootDelay = NTPPacket.intervalFromNTPFormat(data.getUnsignedInteger(atIndex: 4))
-        self.rootDispersion = NTPPacket.intervalFromNTPFormat(data.getUnsignedInteger(atIndex: 8))
-        self.clockSource = ClockSource(stratum: self.stratum, sourceID: data.getUnsignedInteger(atIndex: 12))
-        self.referenceTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(atIndex: 16))
-        self.originTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(atIndex: 24))
-        self.receiveTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(atIndex: 32))
-        self.transmitTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(atIndex: 40))
+        self.leap = LeapIndicator(rawValue: (data.getByte(at: 0) >> 6) & 0b11) ?? .noWarning
+        self.version = data.getByte(at: 0) >> 3 & 0b111
+        self.mode = Mode(rawValue: data.getByte(at: 0) & 0b111) ?? .unknown
+        self.stratum = Stratum(value: data.getByte(at: 1))
+        self.poll = data.getByte(at: 2)
+        self.precision = data.getByte(at: 3)
+        self.rootDelay = NTPPacket.intervalFromNTPFormat(data.getUnsignedInteger(at: 4))
+        self.rootDispersion = NTPPacket.intervalFromNTPFormat(data.getUnsignedInteger(at: 8))
+        self.clockSource = ClockSource(stratum: self.stratum, sourceID: data.getUnsignedInteger(at: 12))
+        self.referenceTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(at: 16))
+        self.originTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(at: 24))
+        self.receiveTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(at: 32))
+        self.transmitTime = NTPPacket.dateFromNTPFormat(data.getUnsignedLong(at: 40))
         self.destinationTime = destinationTime
     }
 
     /// Convert this NTPPacket to a buffer that can be sent over a socket.
     ///
     /// - returns: A bytes buffer representing this packet.
-    mutating func prepareToSend(transmitTime transmitTime: NSTimeInterval? = nil) -> NSData {
+    mutating func prepareToSend(transmitTime: TimeInterval? = nil) -> NSData {
         let data = NSMutableData()
         data.append(byte: self.leap.rawValue << 6 | self.version << 3 | self.mode.rawValue)
         data.append(byte: self.stratum.rawValue)
@@ -134,40 +134,40 @@ struct NTPPacket {
 
         self.transmitTime = transmitTime ?? currentTime()
         data.append(unsignedLong: self.dateToNTPFormat(self.transmitTime))
-        return data
+        return data as NSData
     }
 
     /// Checks properties to make sure that the received PDU is a valid response that we can use.
     ///
     /// - returns: A boolean indicating if the response is valid for the given version.
     func isValidResponse() -> Bool {
-        return (self.mode == .Server || self.mode == .SymmetricPassive) && self.leap != .Alarm
-            && self.stratum != .Invalid && self.stratum != .Unspecified
+        return (self.mode == .server || self.mode == .symmetricPassive) && self.leap != .alarm
+            && self.stratum != .invalid && self.stratum != .unspecified
             && self.rootDispersion < kMaximumDispersion
             && abs(currentTime() - self.originTime - self.delay) < kMaximumDelayDifference
     }
 
     // MARK: - Private helpers
 
-    private func dateToNTPFormat(time: NSTimeInterval) -> UInt64 {
+    private func dateToNTPFormat(_ time: TimeInterval) -> UInt64 {
         let integer = UInt32(time + kEpochDelta)
         let decimal = modf(time).1 * 4294967296.0 // 2 ^ 32
         return UInt64(integer) << 32 | UInt64(decimal)
     }
 
-    private func intervalToNTPFormat(time: NSTimeInterval) -> UInt32 {
+    private func intervalToNTPFormat(_ time: TimeInterval) -> UInt32 {
         let integer = UInt16(time)
         let decimal = modf(time).1 * 65536 // 2 ^ 16
         return UInt32(integer) << 16 | UInt32(decimal)
     }
 
-    private static func dateFromNTPFormat(time: UInt64) -> NSTimeInterval {
+    private static func dateFromNTPFormat(_ time: UInt64) -> TimeInterval {
         let integer = Double(time >> 32)
         let decimal = Double(time & 0xffffffff) / 4294967296.0
         return integer - kEpochDelta + decimal
     }
 
-    private static func intervalFromNTPFormat(time: UInt32) -> NSTimeInterval {
+    private static func intervalFromNTPFormat(_ time: UInt32) -> TimeInterval {
         let integer = Double(time >> 16)
         let decimal = Double(time & 0xffff) / 65536
         return integer + decimal
@@ -189,12 +189,12 @@ struct NTPPacket {
 extension NTPPacket {
 
     /// Clocks offset in seconds.
-    var offset: NSTimeInterval {
+    var offset: TimeInterval {
         return ((self.receiveTime - self.originTime) + (self.transmitTime - self.destinationTime)) / 2.0
     }
 
     /// Round-trip delay in seconds
-    var delay: NSTimeInterval {
+    var delay: TimeInterval {
         return (self.destinationTime - self.originTime) - (self.transmitTime - self.receiveTime)
     }
 }

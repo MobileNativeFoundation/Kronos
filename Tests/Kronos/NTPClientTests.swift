@@ -4,12 +4,12 @@ import XCTest
 final class NTPClientTests: XCTestCase {
 
     func testQueryIP() {
-        let expectation = self.expectationWithDescription("NTPClient queries single IPs")
+        let expectation = self.expectation(description: "NTPClient queries single IPs")
 
         DNSResolver.resolve(host: "time.apple.com") { addresses in
             XCTAssertGreaterThan(addresses.count, 0)
 
-            NTPClient().queryIP(addresses.first!, version: 3, numberOfSamples: 1) { PDU in
+            NTPClient().query(ip: addresses.first!, version: 3, numberOfSamples: 1) { PDU in
                 XCTAssertNotNil(PDU)
 
                 XCTAssertGreaterThanOrEqual(PDU!.version, 3)
@@ -19,31 +19,32 @@ final class NTPClientTests: XCTestCase {
             }
         }
 
-        self.waitForExpectationsWithTimeout(10) { _ in }
+        self.waitForExpectations(timeout: 10) { _ in }
     }
 
     func testQueryPool() {
-        let expectation = self.expectationWithDescription("Offset from ref clock to local clock are accurate")
-        NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
+        let expectation = self.expectation(description: "Offset from ref clock to local clock are accurate")
+        NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
 
-            NTPClient().queryPool("0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset2, _, _ in
+            NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1)
+            { offset2, _, _ in
                 XCTAssertNotNil(offset2)
                 XCTAssertLessThan(abs(offset! - offset2!), 0.10)
                 expectation.fulfill()
             }
         }
 
-        self.waitForExpectationsWithTimeout(10) { _ in }
+        self.waitForExpectations(timeout: 10) { _ in }
     }
 
     func testQueryPoolWithIPv6() {
-        let expectation = self.expectationWithDescription("NTPClient queries a pool that supports IPv6")
-        NTPClient().queryPool("2.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
+        let expectation = self.expectation(description: "NTPClient queries a pool that supports IPv6")
+        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
             expectation.fulfill()
         }
 
-        self.waitForExpectationsWithTimeout(10) { _ in }
+        self.waitForExpectations(timeout: 10) { _ in }
     }
 }

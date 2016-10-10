@@ -1,14 +1,14 @@
 import Foundation
 
-typealias CKTimerHandler = (timer: NSTimer) -> Void
+typealias CKTimerHandler = (Timer) -> Void
 
 /// Simple closure implementation on NSTimer scheduling.
 ///
 /// Example:
 ///
 /// ```swift
-/// BlockTimer.scheduledTimerWithTimeInterval(1.0) { timer in
-///     println("Did something after 1s!")
+/// BlockTimer.scheduledTimer(withTimeInterval: 1.0) { timer in
+///     print("Did something after 1s!")
 /// }
 /// ```
 final class BlockTimer: NSObject {
@@ -21,20 +21,20 @@ final class BlockTimer: NSObject {
     /// - parameter handler:  The closure that the NSTimer fires.
     ///
     /// - returns: A new NSTimer object, configured according to the specified parameters.
-    class func scheduledTimerWithTimeInterval(interval: NSTimeInterval, repeated: Bool = false,
-        handler: CKTimerHandler) -> NSTimer
+    class func scheduledTimer(withTimeInterval interval: TimeInterval, repeated: Bool = false,
+        handler: @escaping CKTimerHandler) -> Timer
     {
-        return NSTimer.scheduledTimerWithTimeInterval(interval, target: self,
-            selector: #selector(BlockTimer.invokeFromTimer(_:)),
+        return Timer.scheduledTimer(timeInterval: interval, target: self,
+            selector: #selector(BlockTimer.invokeFrom(timer:)),
             userInfo: TimerClosureWrapper(handler: handler, repeats: repeated), repeats: repeated)
     }
 
     // MARK: Private methods
 
     @objc
-    class private func invokeFromTimer(timer: NSTimer) {
+    class private func invokeFrom(timer: Timer) {
         if let closureWrapper = timer.userInfo as? TimerClosureWrapper {
-            closureWrapper.handler(timer: timer)
+            closureWrapper.handler(timer)
         }
     }
 }
@@ -42,10 +42,10 @@ final class BlockTimer: NSObject {
 // MARK: - Private classes
 
 private final class TimerClosureWrapper {
-    private var handler: CKTimerHandler
+    fileprivate var handler: CKTimerHandler
     private var repeats: Bool
 
-    init(handler: CKTimerHandler, repeats: Bool) {
+    init(handler: @escaping CKTimerHandler, repeats: Bool) {
         self.handler = handler
         self.repeats = repeats
     }
