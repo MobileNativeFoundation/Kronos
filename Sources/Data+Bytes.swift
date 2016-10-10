@@ -1,11 +1,11 @@
 import Foundation
 
-extension NSData {
+extension Data {
 
-    /// Creates an NSData instace based on a hex string (example: "ffff" would be <FF FF>).
+    /// Creates an Data instace based on a hex string (example: "ffff" would be <FF FF>).
     ///
     /// - parameter hex: The hex string without any spaces; should only have [0-9A-Fa-f].
-    convenience init?(hex: String) {
+    init?(hex: String) {
         if hex.characters.count % 2 != 0 {
             return nil
         }
@@ -21,7 +21,7 @@ extension NSData {
             bytes.append(byte)
         }
 
-        self.init(bytes: bytes, length: bytes.count)
+        self.init(bytes: bytes, count: bytes.count)
     }
 
     /// Gets one byte from the given index.
@@ -30,8 +30,7 @@ extension NSData {
     ///
     /// - returns: The byte located at position `index`.
     func getByte(at index: Int) -> Int8 {
-        var data: Int8 = 0
-        self.getBytes(&data, range: NSRange(location: index, length: 1))
+        let data: Int8 = self.subdata(in: index ..< (index + 1)).withUnsafeBytes { $0.pointee }
         return data
     }
 
@@ -42,8 +41,7 @@ extension NSData {
     ///
     /// - returns: The unsigned int located at position `index`.
     func getUnsignedInteger(at index: Int, bigEndian: Bool = true) -> UInt32 {
-        var data: UInt32 = 0
-        self.getBytes(&data, range: NSRange(location: index, length: 4))
+        let data: UInt32 =  self.subdata(in: index ..< (index + 4)).withUnsafeBytes { $0.pointee }
         return bigEndian ? data.bigEndian : data.littleEndian
     }
 
@@ -54,35 +52,32 @@ extension NSData {
     ///
     /// - returns: The unsigned long integer located at position `index`.
     func getUnsignedLong(at index: Int, bigEndian: Bool = true) -> UInt64 {
-        var data: UInt64 = 0
-        self.getBytes(&data, range: NSRange(location: index, length: 8))
+        let data: UInt64 = self.subdata(in: index ..< (index + 8)).withUnsafeBytes { $0.pointee }
         return bigEndian ? data.bigEndian : data.littleEndian
     }
-}
 
-extension NSMutableData {
 
-    /// Appends the given byte (8 bits) into the receiver NSData.
+    /// Appends the given byte (8 bits) into the receiver Data.
     ///
     /// - parameter data: The byte to be appended.
-    func append(byte data: Int8) {
+    mutating func append(byte data: Int8) {
         var data = data
-        self.append(&data, length: 1)
+        self.append(UnsafeBufferPointer(start: &data, count: 1))
     }
 
-    /// Appends the given unsigned integer (32 bits; 4 bytes) into the receiver NSData.
+    /// Appends the given unsigned integer (32 bits; 4 bytes) into the receiver Data.
     ///
     /// - parameter data: The unsigned integer to be appended.
-    func append(unsignedInteger data: UInt32, bigEndian: Bool = true) {
+    mutating func append(unsignedInteger data: UInt32, bigEndian: Bool = true) {
         var data = bigEndian ? data.bigEndian : data.littleEndian
-        self.append(&data, length: 4)
+        self.append(UnsafeBufferPointer(start: &data, count: 1))
     }
 
-    /// Appends the given unsigned long (64 bits; 8 bytes) into the receiver NSData.
+    /// Appends the given unsigned long (64 bits; 8 bytes) into the receiver Data.
     ///
     /// - parameter data: The unsigned long to be appended.
-    func append(unsignedLong data: UInt64, bigEndian: Bool = true) {
+    mutating func append(unsignedLong data: UInt64, bigEndian: Bool = true) {
         var data = bigEndian ? data.bigEndian : data.littleEndian
-        self.append(&data, length: 8)
+        self.append(UnsafeBufferPointer(start: &data, count: 1))
     }
 }

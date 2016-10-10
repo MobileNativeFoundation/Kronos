@@ -36,11 +36,11 @@ final class DNSResolver {
             }
 
             let IPs = (addresses.takeUnretainedValue() as NSArray)
-                .flatMap { $0 as? NSData }
+                .flatMap { $0 as? Data }
                 .flatMap { data -> InternetAddress? in
-                    let socketAddress = data.bytes.bindMemory(to: sockaddr_storage.self,
-                                                              capacity: data.length)
-                    return InternetAddress(storage: socketAddress)
+                    return data.withUnsafeBytes { (pointer: UnsafePointer<sockaddr_storage>) in
+                        return InternetAddress(storage: pointer)
+                    }
                 }
 
             resolver.completion?(IPs)

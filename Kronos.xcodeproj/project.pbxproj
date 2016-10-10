@@ -10,7 +10,7 @@
 		26447D7C1D6E54D400159BEE /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D731D6E54D400159BEE /* Clock.swift */; };
 		26447D7D1D6E54D400159BEE /* DNSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D741D6E54D400159BEE /* DNSResolver.swift */; };
 		26447D7E1D6E54D400159BEE /* InternetAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D751D6E54D400159BEE /* InternetAddress.swift */; };
-		26447D7F1D6E54D400159BEE /* NSMutableData+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D761D6E54D400159BEE /* NSMutableData+Bytes.swift */; };
+		26447D7F1D6E54D400159BEE /* Data+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D761D6E54D400159BEE /* Data+Bytes.swift */; };
 		26447D801D6E54D400159BEE /* NSTimer+ClosureKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D771D6E54D400159BEE /* NSTimer+ClosureKit.swift */; };
 		26447D811D6E54D400159BEE /* NTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D781D6E54D400159BEE /* NTPClient.swift */; };
 		26447D821D6E54D400159BEE /* NTPPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D791D6E54D400159BEE /* NTPPacket.swift */; };
@@ -37,7 +37,7 @@
 		26447D731D6E54D400159BEE /* Clock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		26447D741D6E54D400159BEE /* DNSResolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DNSResolver.swift; sourceTree = "<group>"; };
 		26447D751D6E54D400159BEE /* InternetAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetAddress.swift; sourceTree = "<group>"; };
-		26447D761D6E54D400159BEE /* NSMutableData+Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableData+Bytes.swift"; sourceTree = "<group>"; };
+		26447D761D6E54D400159BEE /* Data+Bytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
 		26447D771D6E54D400159BEE /* NSTimer+ClosureKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTimer+ClosureKit.swift"; sourceTree = "<group>"; };
 		26447D781D6E54D400159BEE /* NTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPClient.swift; sourceTree = "<group>"; };
 		26447D791D6E54D400159BEE /* NTPPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPPacket.swift; sourceTree = "<group>"; };
@@ -111,7 +111,7 @@
 				26447D731D6E54D400159BEE /* Clock.swift */,
 				26447D741D6E54D400159BEE /* DNSResolver.swift */,
 				26447D751D6E54D400159BEE /* InternetAddress.swift */,
-				26447D761D6E54D400159BEE /* NSMutableData+Bytes.swift */,
+				26447D761D6E54D400159BEE /* Data+Bytes.swift */,
 				26447D771D6E54D400159BEE /* NSTimer+ClosureKit.swift */,
 				26447D781D6E54D400159BEE /* NTPClient.swift */,
 				26447D791D6E54D400159BEE /* NTPPacket.swift */,
@@ -223,7 +223,7 @@
 				26447D7D1D6E54D400159BEE /* DNSResolver.swift in Sources */,
 				26447D7E1D6E54D400159BEE /* InternetAddress.swift in Sources */,
 				26447D811D6E54D400159BEE /* NTPClient.swift in Sources */,
-				26447D7F1D6E54D400159BEE /* NSMutableData+Bytes.swift in Sources */,
+				26447D7F1D6E54D400159BEE /* Data+Bytes.swift in Sources */,
 				26447D841D6E54D400159BEE /* TimeFreeze.swift in Sources */,
 				26447D821D6E54D400159BEE /* NTPPacket.swift in Sources */,
 				26447D801D6E54D400159BEE /* NSTimer+ClosureKit.swift in Sources */,
