@@ -42,4 +42,14 @@ final class DNSResolverTests: XCTestCase {
 
         self.waitForExpectations(timeout: 5) { _ in }
     }
+
+    func testTimeout() {
+        let expectation = self.expectation(description: "DNS times out")
+        DNSResolver.resolve(host: "ip6.nl", timeout: 0) { addresses in
+            XCTAssertEqual(addresses.count, 0)
+            expectation.fulfill()
+        }
+
+        self.waitForExpectations(timeout: 1.0) { _ in }
+    }
 }
