@@ -64,11 +64,11 @@ enum InternetAddress: Hashable {
         switch self {
             case .ipv6(var address):
                 address.sin6_port = in_port_t(port).bigEndian
-                return NSData(bytes: &address, length: MemoryLayout<sockaddr_in6>.size) as CFData
+                return Data(bytes: &address, count: MemoryLayout<sockaddr_in6>.size) as CFData
 
             case .ipv4(var address):
                 address.sin_port = in_port_t(port).bigEndian
-                return NSData(bytes: &address, length: MemoryLayout<sockaddr_in>.size) as CFData
+                return Data(bytes: &address, count: MemoryLayout<sockaddr_in>.size) as CFData
         }
     }
 }

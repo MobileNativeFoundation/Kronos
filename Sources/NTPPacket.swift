@@ -95,9 +95,9 @@ struct NTPPacket {
     /// - parameter data:            The PDU received from the NTP call.
     /// - parameter destinationTime: The time where the package arrived (client time) in EPOCH format.
     /// - throws:                    NTPParsingError in case of an invalid response.
-    init(data: NSData, destinationTime: TimeInterval) throws {
-        if data.length < 48 {
-            throw NTPParsingError.invalidNTPPDU("Invalid PDU length: \(data.length)")
+    init(data: Data, destinationTime: TimeInterval) throws {
+        if data.count < 48 {
+            throw NTPParsingError.invalidNTPPDU("Invalid PDU length: \(data.count)")
         }
 
         self.leap = LeapIndicator(rawValue: (data.getByte(at: 0) >> 6) & 0b11) ?? .noWarning
@@ -119,8 +119,8 @@ struct NTPPacket {
     /// Convert this NTPPacket to a buffer that can be sent over a socket.
     ///
     /// - returns: A bytes buffer representing this packet.
-    mutating func prepareToSend(transmitTime: TimeInterval? = nil) -> NSData {
-        let data = NSMutableData()
+    mutating func prepareToSend(transmitTime: TimeInterval? = nil) -> Data {
+        var data = Data()
         data.append(byte: self.leap.rawValue << 6 | self.version << 3 | self.mode.rawValue)
         data.append(byte: self.stratum.rawValue)
         data.append(byte: self.poll)
@@ -134,7 +134,7 @@ struct NTPPacket {
 
         self.transmitTime = transmitTime ?? currentTime()
         data.append(unsignedLong: self.dateToNTPFormat(self.transmitTime))
-        return data as NSData
+        return data
     }
 
     /// Checks properties to make sure that the received PDU is a valid response that we can use.

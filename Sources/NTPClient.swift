@@ -5,7 +5,7 @@ private let kDefaultSamples = 4
 private let kMaximumNTPServers = 5
 private let kMaximumResultDispersion = 10.0
 
-private typealias ObjCCompletionType = @convention(block) (NSData?, TimeInterval) -> Void
+private typealias ObjCCompletionType = @convention(block) (Data?, TimeInterval) -> Void
 
 /// Exception raised while sending / receiving NTP packets.
 enum NTPNetworkError: Error {
@@ -148,11 +148,8 @@ final class NTPClient {
         let callback: CFSocketCallBack = { socket, callbackType, address, data, info in
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
-                let PDU = packet.prepareToSend()
-                let data = CFDataCreate(kCFAllocatorDefault,
-                                        PDU.bytes.bindMemory(to: UInt8.self, capacity: PDU.length),
-                                        PDU.length)
-                CFSocketSendData(socket, nil, data, kDefaultTimeout)
+                let PDU = packet.prepareToSend() as CFData
+                CFSocketSendData(socket, nil, PDU, kDefaultTimeout)
                 return
             }
 
@@ -166,7 +163,7 @@ final class NTPClient {
             let retainedClosure = Unmanaged<AnyObject>.fromOpaque(info)
             let completion = unsafeBitCast(retainedClosure.takeUnretainedValue(), to: ObjCCompletionType.self)
 
-            let data = unsafeBitCast(data, to: CFData.self) as NSData?
+            let data = unsafeBitCast(data, to: CFData.self) as Data?
             completion(data, destinationTime)
             retainedClosure.release()
         }
