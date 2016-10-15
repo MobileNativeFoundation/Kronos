@@ -124,12 +124,12 @@
 		C2C037011C2B1A14003FB853 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				C2E17C5F1C7944E400C90E46 /* Kronos */,
+				C2E17C5F1C7944E400C90E46 /* KronosTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		C2E17C5F1C7944E400C90E46 /* Kronos */ = {
+		C2E17C5F1C7944E400C90E46 /* KronosTests */ = {
 			isa = PBXGroup;
 			children = (
 				26447D851D6E54FF00159BEE /* ClockTests.swift */,
@@ -137,7 +137,7 @@
 				26447D871D6E54FF00159BEE /* NTPClientTests.swift */,
 				26447D881D6E54FF00159BEE /* NTPPacketTests.swift */,
 			);
-			path = Kronos;
+			path = KronosTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

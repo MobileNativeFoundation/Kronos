@@ -55,13 +55,13 @@ final class DNSResolver {
                                                 retain: nil, release: nil, copyDescription: kCopyNoOperation)
 
         let hostReference = CFHostCreateWithName(kCFAllocatorDefault, host as CFString).takeUnretainedValue()
-        CFHostSetClient(hostReference, callback, &clientContext)
-        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
-        CFHostStartInfoResolution(hostReference, .addresses, nil)
-
         resolver.timer = Timer.scheduledTimer(timeInterval: timeout, target: resolver,
                                               selector: #selector(DNSResolver.onTimeout),
                                               userInfo: hostReference, repeats: false)
+
+        CFHostSetClient(hostReference, callback, &clientContext)
+        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
+        CFHostStartInfoResolution(hostReference, .addresses, nil)
     }
 
     @objc
@@ -77,7 +77,7 @@ final class DNSResolver {
             return
         }
 
-        let hostReference = unsafeBitCast(userInfo, to: CFHost.self)
+        let hostReference = unsafeBitCast(userInfo as AnyObject, to: CFHost.self)
         CFHostCancelInfoResolution(hostReference, .addresses)
         CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
         CFHostSetClient(hostReference, nil, nil)
