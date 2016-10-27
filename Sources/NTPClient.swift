@@ -179,6 +179,9 @@ final class NTPClient {
 
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, CFRunLoopMode.commonModes)
+
+        var noSIGPIPE: UInt32 = 1
+        setsockopt(CFSocketGetNative(socket), SOL_SOCKET, SO_NOSIGPIPE, &noSIGPIPE, 4)
         CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
         return (runLoopSource!, socket)
     }

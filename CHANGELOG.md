@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.2](https://github.com/lyft/Kronos/releases/tag/0.2.1)
+- Add NOSIGPIPE to socket so the app doesn't crash on the event of a
+PIPE signal
+
 ## [0.2.1](https://github.com/lyft/Kronos/releases/tag/0.2.1)
 - Fix crash on DNS timeout after Swift 3 integration
 
