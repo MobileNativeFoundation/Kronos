@@ -145,6 +145,8 @@ final class NTPClient {
     private func sendAsyncUDPQuery(to ip: InternetAddress, port: Int, timeout: TimeInterval,
                                    completion: UnsafeMutableRawPointer) -> (CFRunLoopSource, CFSocket)?
     {
+        signal(SIGPIPE, SIG_IGN)
+
         let callback: CFSocketCallBack = { socket, callbackType, address, data, info in
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
@@ -179,9 +181,6 @@ final class NTPClient {
 
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, CFRunLoopMode.commonModes)
-
-        var noSIGPIPE: UInt32 = 1
-        setsockopt(CFSocketGetNative(socket), SOL_SOCKET, SO_NOSIGPIPE, &noSIGPIPE, 4)
         CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
         return (runLoopSource!, socket)
     }
