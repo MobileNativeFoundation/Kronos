@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.2.2](https://github.com/lyft/Kronos/releases/tag/0.2.1)
+## [0.2.3](https://github.com/lyft/Kronos/releases/tag/0.2.3)
+- Add NOSIGPIPE to socket so the app doesn't crash on the event of a
+PIPE signal - Globally this time.
+
+## [0.2.2](https://github.com/lyft/Kronos/releases/tag/0.2.2)
 - Add NOSIGPIPE to socket so the app doesn't crash on the event of a
 PIPE signal
 
