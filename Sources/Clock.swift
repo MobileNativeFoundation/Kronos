@@ -12,7 +12,7 @@ import Foundation
 ///     print(date)
 /// }
 /// // (... later on ...)
-/// print(Clock.date)
+/// print(Clock.now)
 /// ```
 public struct Clock {
 
