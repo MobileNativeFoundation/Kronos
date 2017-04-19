@@ -1,4 +1,5 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
