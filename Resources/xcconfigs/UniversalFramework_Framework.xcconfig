@@ -24,8 +24,6 @@ TARGETED_DEVICE_FAMILY[sdk=watchsimulator*]   = 4
 TARGETED_DEVICE_FAMILY[sdk=watch*]            = 4
 
 ENABLE_BITCODE[sdk=macosx*]                   = NO
-ENABLE_BITCODE[sdk=watchsimulator*]           = YES
-ENABLE_BITCODE[sdk=watch*]                    = YES
 ENABLE_BITCODE[sdk=iphonesimulator*]          = YES
 ENABLE_BITCODE[sdk=iphone*]                   = YES
 ENABLE_BITCODE[sdk=appletvsimulator*]         = YES
