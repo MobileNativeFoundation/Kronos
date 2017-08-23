@@ -37,8 +37,8 @@ public struct Clock {
     ///                            for the synchronization.
     /// - parameter samples:       The number of samples to be acquired from each server (default 4).
     /// - parameter initialOffset: Offset to be used while NTP synchronization is occurring.
-    /// - parameter completion:    A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:         A closure that will be called after the first valid date is calculated.
+    /// - parameter completion:    A closure that will be called after _all_ the NTP calls are finished.
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
                             initialOffset: TimeInterval? = nil, first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
