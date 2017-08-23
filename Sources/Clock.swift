@@ -33,16 +33,17 @@ public struct Clock {
     /// initial clock adjustment but it might not be the most accurate representation. After calling the
     /// closure this method will continue syncing with multiple servers and multiple passes.
     ///
-    /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
-    ///                         the synchronization.
-    /// - parameter samples:    The number of samples to be acquired from each server (default 4).
-    /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
-    /// - parameter first:      A closure that will be called after the first valid date is calculated.
+    /// - parameter pool:          NTP pool that will be resolved into multiple NTP servers that will be used
+    ///                            for the synchronization.
+    /// - parameter samples:       The number of samples to be acquired from each server (default 4).
+    /// - parameter initialOffset: Offset to be used while NTP synchronization is occurring.
+    /// - parameter first:         A closure that will be called after the first valid date is calculated.
+    /// - parameter completion:    A closure that will be called after _all_ the NTP calls are finished.
     public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
-                            first: ((Date, TimeInterval) -> Void)? = nil,
+                            initialOffset: TimeInterval? = nil, first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
-        self.reset()
+        self.stableTime = initialOffset.map { TimeFreeze(offset: $0) }
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
             if let offset = offset {
