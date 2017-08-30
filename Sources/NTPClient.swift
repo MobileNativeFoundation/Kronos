@@ -107,12 +107,12 @@ final class NTPClient {
         )
 
         timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: true) { _ in
-            bridgeCallback(nil, TimeInterval.infinity)
+            bridgeCallback(nil, .infinity)
             retainedCallback.release()
 
             if let (source, socket) = sourceAndSocket {
                 CFSocketInvalidate(socket)
-                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, CFRunLoopMode.commonModes)
+                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
             }
         }
     }
@@ -180,7 +180,7 @@ final class NTPClient {
         }
 
         let runLoopSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, 0)
-        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, CFRunLoopMode.commonModes)
+        CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, .commonModes)
         CFSocketConnectToAddress(socket, ip.addressData(withPort: port), timeout)
         return (runLoopSource!, socket)
     }

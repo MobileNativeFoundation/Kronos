@@ -55,9 +55,9 @@ final class DNSResolver {
                                                 retain: nil, release: nil, copyDescription: kCopyNoOperation)
 
         let hostReference = CFHostCreateWithName(kCFAllocatorDefault, host as CFString).takeUnretainedValue()
-        resolver.timer = Timer.scheduledTimer(timeInterval: timeout, target: resolver,
-                                              selector: #selector(DNSResolver.onTimeout),
-                                              userInfo: hostReference, repeats: false)
+        resolver.timer = .scheduledTimer(timeInterval: timeout, target: resolver,
+                                         selector: #selector(onTimeout),
+                                         userInfo: hostReference, repeats: false)
 
         CFHostSetClient(hostReference, callback, &clientContext)
         CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
