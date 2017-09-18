@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0](https://github.com/lyft/Kronos/releases/tag/1.0.0)
+- Use `UserDefaults` to cache the previous stable time
+
 ## [0.2.4](https://github.com/lyft/Kronos/releases/tag/0.2.4)
 - Add Swift 4 support
 
