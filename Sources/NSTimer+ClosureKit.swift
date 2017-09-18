@@ -22,7 +22,7 @@ final class BlockTimer: NSObject {
     ///
     /// - returns: A new NSTimer object, configured according to the specified parameters.
     class func scheduledTimer(withTimeInterval interval: TimeInterval, repeated: Bool = false,
-        handler: @escaping CKTimerHandler) -> Timer
+                              handler: @escaping CKTimerHandler) -> Timer
     {
         return Timer.scheduledTimer(timeInterval: interval, target: self,
             selector: #selector(BlockTimer.invokeFrom(timer:)),

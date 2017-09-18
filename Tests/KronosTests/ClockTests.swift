@@ -36,7 +36,6 @@ final class ClockTests: XCTestCase {
             first: { _ in lastExpectation.fulfill() },
             completion: { _ in firstExpectation.fulfill() })
 
-
         self.waitForExpectations(timeout: 10) { _ in }
     }
 }

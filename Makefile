@@ -11,7 +11,7 @@ install-tvOS:
 
 install-lint:
 	brew remove swiftlint --force || true
-	brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/3d0cc175398ceba2c42204b04dd2a3b5d79536d9/Formula/swiftlint.rb
+	brew install --force-bottle https://raw.githubusercontent.com/Homebrew/homebrew-core/c4fdf3db8d45d16b7bb824a974d8fa65f445d75f/Formula/swiftlint.rb
 
 # Run Tasks
 

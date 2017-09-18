@@ -6,7 +6,7 @@ private let kClockWidth = 26
 private let kPositionOffsetByBit = [(1, 1), (1, 0), (2, 0), (2, 1), (2, 3), (1, 3), (0, 1)]
 private let kLEDDigits: [Int32] = [
     0b1111110, 0b0110000, 0b1101101, 0b1111001, 0b0110011,
-    0b1011011, 0b1011111, 0b1110000, 0b1111111, 0b1111011
+    0b1011011, 0b1011111, 0b1110000, 0b1111111, 0b1111011,
 ]
 
 private struct Curses {

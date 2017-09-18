@@ -56,7 +56,6 @@ extension Data {
         return bigEndian ? data.bigEndian : data.littleEndian
     }
 
-
     /// Appends the given byte (8 bits) into the receiver Data.
     ///
     /// - parameter data: The byte to be appended.
