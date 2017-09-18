@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.4](https://github.com/lyft/Kronos/releases/tag/0.2.4)
+- Add Swift 4 support
+
 ## [0.2.3](https://github.com/lyft/Kronos/releases/tag/0.2.3)
 - Add NOSIGPIPE to socket so the app doesn't crash on the event of a
 PIPE signal - Globally this time.

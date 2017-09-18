@@ -33,8 +33,8 @@ final class ClockTests: XCTestCase {
         let firstExpectation = self.expectation(description: "Clock sync calls first closure")
         let lastExpectation = self.expectation(description: "Clock sync calls last closure")
         Clock.sync(
-            first: { _ in lastExpectation.fulfill() },
-            completion: { _ in firstExpectation.fulfill() })
+            first: { _, _ in lastExpectation.fulfill() },
+            completion: { _, _ in firstExpectation.fulfill() })
 
 
         self.waitForExpectations(timeout: 10) { _ in }

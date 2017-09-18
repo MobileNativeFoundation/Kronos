@@ -10,7 +10,7 @@ matrix:
       env: ACTION=tvOS
 
 language: objective-c
-osx_image: xcode8
+osx_image: xcode9
 
 script:
   - make install-$ACTION && make test-$ACTION
