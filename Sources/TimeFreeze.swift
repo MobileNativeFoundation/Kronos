@@ -1,5 +1,9 @@
 import Foundation
 
+private let kUptimeKey = "Uptime"
+private let kTimestampKey = "Timestamp"
+private let kOffsetKey = "Offset"
+
 struct TimeFreeze {
     private let uptime: TimeInterval
     private let timestamp: TimeInterval
@@ -20,6 +24,35 @@ struct TimeFreeze {
         self.offset = offset
         self.timestamp = currentTime()
         self.uptime = TimeFreeze.systemUptime()
+    }
+
+    init?(from dictionary: [String: TimeInterval]) {
+        guard let uptime = dictionary[kUptimeKey], let timestamp = dictionary[kTimestampKey],
+            let offset = dictionary[kOffsetKey] else
+        {
+            return nil
+        }
+
+        let currentBoot = TimeFreeze.systemUptime() - currentTime()
+        let previousBoot = uptime - timestamp
+        if rint(currentBoot) - rint(previousBoot) != 0 {
+            return nil
+        }
+
+        self.uptime = uptime
+        self.timestamp = timestamp
+        self.offset = offset
+    }
+
+    /// Convert this TimeFreeze to a dictionary representation.
+    ///
+    /// - returns: A dictionary representation.
+    func toDictionary() -> [String: TimeInterval] {
+        return [
+            kUptimeKey: self.uptime,
+            kTimestampKey: self.timestamp,
+            kOffsetKey: self.offset,
+        ]
     }
 
     /// Returns a high-resolution measurement of system uptime, that continues ticking through device sleep

@@ -16,7 +16,16 @@ import Foundation
 /// ```
 public struct Clock {
 
-    private static var stableTime: TimeFreeze?
+    private static let kDefaultsKey = "KronosStableTime"
+
+    private static var stableTime: TimeFreeze? {
+        didSet {
+            guard let stableTime = self.stableTime else {
+                return
+            }
+            UserDefaults.standard.set(stableTime.toDictionary(), forKey: kDefaultsKey)
+        }
+    }
 
     /// The most accurate timestamp that we have so far (nil if no synchronization was done yet)
     public static var timestamp: TimeInterval? {
@@ -42,7 +51,7 @@ public struct Clock {
                             first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
-        self.reset()
+        self.loadFromDefaults()
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
             if let offset = offset {
@@ -63,5 +72,15 @@ public struct Clock {
     /// again.
     public static func reset() {
         self.stableTime = nil
+    }
+
+    private static func loadFromDefaults() {
+        guard let stored = UserDefaults.standard.value(forKey: kDefaultsKey) as? [String: TimeInterval],
+            let previousStableTime = TimeFreeze(from: stored) else
+        {
+            self.stableTime = nil
+            return
+        }
+        self.stableTime = previousStableTime
     }
 }
