@@ -25,9 +25,9 @@ final class NTPClient {
     /// - parameter timeout:         The individual timeout for each of the NTP operations.
     /// - parameter completion:      A closure that will be response PDU on success or nil on error.
     func query(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
-                   numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
-                   timeout: CFTimeInterval = kDefaultTimeout,
-                   progress: @escaping (TimeInterval?, Int, Int) -> Void)
+               numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
+               timeout: CFTimeInterval = kDefaultTimeout,
+               progress: @escaping (TimeInterval?, Int, Int) -> Void)
     {
         var servers: [InternetAddress: [NTPPacket]] = [:]
         var completed: Int = 0

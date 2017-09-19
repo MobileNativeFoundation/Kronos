@@ -5,3 +5,5 @@ disabled_rules:
   - nesting
   - opening_brace
   - valid_docs
+trailing_comma:
+  mandatory_comma: true
