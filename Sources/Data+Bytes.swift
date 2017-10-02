@@ -6,11 +6,11 @@ extension Data {
     ///
     /// - parameter hex: The hex string without any spaces; should only have [0-9A-Fa-f].
     init?(hex: String) {
-        if hex.characters.count % 2 != 0 {
+        if hex.count % 2 != 0 {
             return nil
         }
 
-        let hexArray = Array(hex.characters)
+        let hexArray = Array(hex)
         var bytes: [UInt8] = []
 
         for index in stride(from: 0, to: hexArray.count, by: 2) {
