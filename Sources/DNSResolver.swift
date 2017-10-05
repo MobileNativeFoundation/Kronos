@@ -60,7 +60,7 @@ final class DNSResolver {
                                               userInfo: hostReference, repeats: false)
 
         CFHostSetClient(hostReference, callback, &clientContext)
-        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
+        CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         CFHostStartInfoResolution(hostReference, .addresses, nil)
     }
 
@@ -79,7 +79,7 @@ final class DNSResolver {
 
         let hostReference = unsafeBitCast(userInfo as AnyObject, to: CFHost.self)
         CFHostCancelInfoResolution(hostReference, .addresses)
-        CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes.rawValue)
+        CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         CFHostSetClient(hostReference, nil, nil)
     }
 }

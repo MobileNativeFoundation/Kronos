@@ -93,7 +93,8 @@ final class NTPClient {
             guard
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else
             {
-                return completion(nil)
+                completion(nil)
+                return
             }
 
             completion(PDU.isValidResponse() ? PDU : nil)

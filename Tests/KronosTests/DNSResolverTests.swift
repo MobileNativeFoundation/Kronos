@@ -10,7 +10,7 @@ final class DNSResolverTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 5) { _ in }
+        self.waitForExpectations(timeout: 5)
     }
 
     func testResolveMultipleIP() {
@@ -20,7 +20,7 @@ final class DNSResolverTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 5) { _ in }
+        self.waitForExpectations(timeout: 5)
     }
 
     func testResolveIPv6() {
@@ -30,7 +30,7 @@ final class DNSResolverTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 5) { _ in }
+        self.waitForExpectations(timeout: 5)
     }
 
     func testInvalidIP() {
@@ -40,7 +40,7 @@ final class DNSResolverTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 5) { _ in }
+        self.waitForExpectations(timeout: 5)
     }
 
     func testTimeout() {
@@ -50,6 +50,17 @@ final class DNSResolverTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 1.0) { _ in }
+        self.waitForExpectations(timeout: 1.0)
+    }
+
+    func testTemporaryRunloopHandling() {
+        let expectation = self.expectation(description: "Query works from async GCD queues")
+        DispatchQueue(label: "Ephemeral DNS test queue").async {
+            DNSResolver.resolve(host: "lyft.com") { _ in
+                expectation.fulfill()
+            }
+        }
+
+        self.waitForExpectations(timeout: 5)
     }
 }

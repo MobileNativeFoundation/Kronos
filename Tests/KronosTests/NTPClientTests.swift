@@ -19,7 +19,7 @@ final class NTPClientTests: XCTestCase {
             }
         }
 
-        self.waitForExpectations(timeout: 10) { _ in }
+        self.waitForExpectations(timeout: 10)
     }
 
     func testQueryPool() {
@@ -35,7 +35,7 @@ final class NTPClientTests: XCTestCase {
             }
         }
 
-        self.waitForExpectations(timeout: 10) { _ in }
+        self.waitForExpectations(timeout: 10)
     }
 
     func testQueryPoolWithIPv6() {
@@ -45,6 +45,6 @@ final class NTPClientTests: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 10) { _ in }
+        self.waitForExpectations(timeout: 10)
     }
 }
