@@ -24,8 +24,8 @@ final class BlockTimer: NSObject {
     class func scheduledTimer(withTimeInterval interval: TimeInterval, repeated: Bool = false,
                               handler: @escaping CKTimerHandler) -> Timer
     {
-        return Timer.scheduledTimer(timeInterval: interval, target: self,
-            selector: #selector(BlockTimer.invokeFrom(timer:)),
+        return .scheduledTimer(timeInterval: interval, target: self,
+            selector: #selector(invokeFrom),
             userInfo: TimerClosureWrapper(handler: handler, repeats: repeated), repeats: repeated)
     }
 

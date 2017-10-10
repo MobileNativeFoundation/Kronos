@@ -71,9 +71,11 @@ enum InternetAddress: Hashable {
                 return Data(bytes: &address, count: MemoryLayout<sockaddr_in>.size) as CFData
         }
     }
+
+    /// Compare InternetAddress(es) by making sure the host representation are equal.
+    static func == (lhs: InternetAddress, rhs: InternetAddress) -> Bool {
+        return lhs.host == rhs.host
+    }
 }
 
-/// Compare InternetAddress(es) by making sure the host representation are equal.
-func == (lhs: InternetAddress, rhs: InternetAddress) -> Bool {
-    return lhs.host == rhs.host
-}
+
