@@ -3,7 +3,7 @@ import XCTest
 
 final class ClockTests: XCTestCase {
 
-    override func tearDown() {
+    override func setUp() {
         super.setUp()
         Clock.reset()
     }
@@ -15,7 +15,7 @@ final class ClockTests: XCTestCase {
             expectation.fulfill()
         })
 
-        self.waitForExpectations(timeout: 2) { _ in }
+        self.waitForExpectations(timeout: 2)
     }
 
     func testLast() {
@@ -26,16 +26,16 @@ final class ClockTests: XCTestCase {
             expectation.fulfill()
         })
 
-        self.waitForExpectations(timeout: 10) { _ in }
+        self.waitForExpectations(timeout: 20)
     }
 
     func testBoth() {
         let firstExpectation = self.expectation(description: "Clock sync calls first closure")
         let lastExpectation = self.expectation(description: "Clock sync calls last closure")
         Clock.sync(
-            first: { _, _ in lastExpectation.fulfill() },
-            completion: { _, _ in firstExpectation.fulfill() })
+            first: { _, _ in firstExpectation.fulfill() },
+            completion: { _, _ in lastExpectation.fulfill() })
 
-        self.waitForExpectations(timeout: 10) { _ in }
+        self.waitForExpectations(timeout: 20)
     }
 }
