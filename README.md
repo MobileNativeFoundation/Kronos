@@ -89,6 +89,22 @@ $ export SWIFT_EXEC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeD
 $ swift build
 ```
 
+### Carthage
+
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Cocoa. You can install it by following the instructions [here](https://github.com/Carthage/Carthage#installing-carthage).
+
+To integrate Kronos into your project using Carthage, specify it in your `Cartfile`:
+
+```carthage
+github "lyft/Kronos"
+```
+
+Then, run the following command:
+
+```bash
+$ carthage update
+```
+
 ## License
 
 Kronos is maintained by [Lyft](https://www.lyft.com/) and released under
