@@ -15,16 +15,9 @@ import Foundation
 /// print(Clock.now)
 /// ```
 public struct Clock {
-
-    private static let kDefaultsKey = "KronosStableTime"
-    private static var appGroupID: String? = nil
-
     private static var stableTime: TimeFreeze? {
         didSet {
-            guard let stableTime = self.stableTime else {
-                return
-            }
-            self.defaults.set(stableTime.toDictionary(), forKey: kDefaultsKey)
+            DefaultsController.stableTime = self.stableTime
         }
     }
 
@@ -54,7 +47,7 @@ public struct Clock {
                             first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
-        self.appGroupID = appGroupID
+        DefaultsController.updateAppGroupID(appGroupID)
         self.loadFromDefaults()
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
@@ -79,20 +72,10 @@ public struct Clock {
     }
 
     private static func loadFromDefaults() {
-        guard let stored = self.defaults.value(forKey: kDefaultsKey) as? [String: TimeInterval],
-            let previousStableTime = TimeFreeze(from: stored) else
-        {
+        guard let previousStableTime = DefaultsController.stableTime else {
             self.stableTime = nil
             return
         }
         self.stableTime = previousStableTime
-    }
-
-    private static var defaults: UserDefaults {
-        if let appGroupID = self.appGroupID {
-            return UserDefaults(suiteName: appGroupID) ?? .standard
-        } else {
-            return UserDefaults.standard
-        }
     }
 }
