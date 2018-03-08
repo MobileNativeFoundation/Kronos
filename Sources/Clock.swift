@@ -17,9 +17,13 @@ import Foundation
 public struct Clock {
     private static var stableTime: TimeFreeze? {
         didSet {
-            DefaultsController.stableTime = self.stableTime
+            self.storage.stableTime = self.stableTime
         }
     }
+
+    /// Determines where the most current stable time is stored. Use TimeStoragePolicy.appGroup to share
+    /// between your app and an extension.
+    public static var storage = TimeStorage(storagePolicy: .standard)
 
     /// The most accurate timestamp that we have so far (nil if no synchronization was done yet)
     public static var timestamp: TimeInterval? {
@@ -39,15 +43,12 @@ public struct Clock {
     /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
     ///                         the synchronization.
     /// - parameter samples:    The number of samples to be acquired from each server (default 4).
-    /// - parameter appGroupID: The shared app group your app and extensions use to share data. This will be
-    ///                         helpful if you want to use Kronos in an app extension context.
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:      A closure that will be called after the first valid date is calculated.
-    public static func sync(from pool: String = "time.apple.com", samples: Int = 4, appGroupID: String? = nil,
+    public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
                             first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
-        DefaultsController.updateAppGroupID(appGroupID)
         self.loadFromDefaults()
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
@@ -72,7 +73,7 @@ public struct Clock {
     }
 
     private static func loadFromDefaults() {
-        guard let previousStableTime = DefaultsController.stableTime else {
+        guard let previousStableTime = self.storage.stableTime else {
             self.stableTime = nil
             return
         }

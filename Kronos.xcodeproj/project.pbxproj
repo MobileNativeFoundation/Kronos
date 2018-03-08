@@ -20,8 +20,8 @@
 		26447D8A1D6E54FF00159BEE /* DNSResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D861D6E54FF00159BEE /* DNSResolverTests.swift */; };
 		26447D8B1D6E54FF00159BEE /* NTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D871D6E54FF00159BEE /* NTPClientTests.swift */; };
 		26447D8C1D6E54FF00159BEE /* NTPPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D881D6E54FF00159BEE /* NTPPacketTests.swift */; };
-		930B39D92051D8BB00360BA2 /* DefaultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39D82051D8BB00360BA2 /* DefaultsController.swift */; };
-		930B39DB2051DB2500360BA2 /* DefaultsControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DA2051DB2500360BA2 /* DefaultsControllerTests.swift */; };
+		930B39DD2051E6D300360BA2 /* TimeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DC2051E6D300360BA2 /* TimeStorage.swift */; };
+		930B39E02051F26500360BA2 /* TimeStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DE2051F25300360BA2 /* TimeStorageTests.swift */; };
 		C201748E1BD5509D00E4FE18 /* Kronos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20174831BD5509D00E4FE18 /* Kronos.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,8 +49,8 @@
 		26447D861D6E54FF00159BEE /* DNSResolverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DNSResolverTests.swift; sourceTree = "<group>"; };
 		26447D871D6E54FF00159BEE /* NTPClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPClientTests.swift; sourceTree = "<group>"; };
 		26447D881D6E54FF00159BEE /* NTPPacketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPPacketTests.swift; sourceTree = "<group>"; };
-		930B39D82051D8BB00360BA2 /* DefaultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsController.swift; sourceTree = "<group>"; };
-		930B39DA2051DB2500360BA2 /* DefaultsControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsControllerTests.swift; sourceTree = "<group>"; };
+		930B39DC2051E6D300360BA2 /* TimeStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeStorage.swift; sourceTree = "<group>"; };
+		930B39DE2051F25300360BA2 /* TimeStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeStorageTests.swift; sourceTree = "<group>"; };
 		C20174831BD5509D00E4FE18 /* Kronos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kronos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C201748D1BD5509D00E4FE18 /* KronosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KronosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2C036D11C2B180D003FB853 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -121,7 +121,7 @@
 				26447D791D6E54D400159BEE /* NTPPacket.swift */,
 				26447D7A1D6E54D400159BEE /* NTPProtocol.swift */,
 				26447D7B1D6E54D400159BEE /* TimeFreeze.swift */,
-				930B39D82051D8BB00360BA2 /* DefaultsController.swift */,
+				930B39DC2051E6D300360BA2 /* TimeStorage.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -141,7 +141,7 @@
 				26447D861D6E54FF00159BEE /* DNSResolverTests.swift */,
 				26447D871D6E54FF00159BEE /* NTPClientTests.swift */,
 				26447D881D6E54FF00159BEE /* NTPPacketTests.swift */,
-				930B39DA2051DB2500360BA2 /* DefaultsControllerTests.swift */,
+				930B39DE2051F25300360BA2 /* TimeStorageTests.swift */,
 			);
 			path = KronosTests;
 			sourceTree = "<group>";
@@ -225,7 +225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26447D831D6E54D400159BEE /* NTPProtocol.swift in Sources */,
-				930B39D92051D8BB00360BA2 /* DefaultsController.swift in Sources */,
+				930B39DD2051E6D300360BA2 /* TimeStorage.swift in Sources */,
 				26447D7C1D6E54D400159BEE /* Clock.swift in Sources */,
 				26447D7D1D6E54D400159BEE /* DNSResolver.swift in Sources */,
 				26447D7E1D6E54D400159BEE /* InternetAddress.swift in Sources */,
@@ -241,7 +241,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				930B39DB2051DB2500360BA2 /* DefaultsControllerTests.swift in Sources */,
+				930B39E02051F26500360BA2 /* TimeStorageTests.swift in Sources */,
 				26447D8C1D6E54FF00159BEE /* NTPPacketTests.swift in Sources */,
 				26447D8B1D6E54FF00159BEE /* NTPClientTests.swift in Sources */,
 				26447D891D6E54FF00159BEE /* ClockTests.swift in Sources */,
