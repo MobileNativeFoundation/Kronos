@@ -23,7 +23,7 @@ class TimeStoragePolicyTests: XCTestCase {
 
 class TimeStorageTests: XCTestCase {
     func testStoringAndRetrievingTimeFreeze() {
-        let storage = TimeStorage(storagePolicy: .standard)
+        var storage = TimeStorage(storagePolicy: .standard)
         let sampleFreeze = TimeFreeze(offset: 5000.32423)
         storage.stableTime = sampleFreeze
         let fromDefaults = storage.stableTime

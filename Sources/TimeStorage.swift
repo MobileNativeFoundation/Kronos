@@ -16,24 +16,18 @@ public enum TimeStoragePolicy {
     }
 }
 
-public class TimeStorage {
+public struct TimeStorage {
     private var userDefaults: UserDefaults
     private let kDefaultsKey = "KronosStableTime"
 
-    private var _stableTime: TimeFreeze?
     var stableTime: TimeFreeze? {
         get {
-            if let stable = self._stableTime {
-                return stable
-            }
-
             guard let stored = self.userDefaults.value(forKey: kDefaultsKey) as? [String: TimeInterval],
                 let previousStableTime = TimeFreeze(from: stored) else
             {
                 return nil
             }
 
-            self._stableTime = previousStableTime
             return previousStableTime
         }
 
@@ -42,7 +36,6 @@ public class TimeStorage {
                 return
             }
 
-            self._stableTime = nil
             self.userDefaults.set(newFreeze.toDictionary(), forKey: kDefaultsKey)
         }
     }
