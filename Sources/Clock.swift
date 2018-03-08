@@ -17,13 +17,14 @@ import Foundation
 public struct Clock {
 
     private static let kDefaultsKey = "KronosStableTime"
+    private static var appGroupID: String? = nil
 
     private static var stableTime: TimeFreeze? {
         didSet {
             guard let stableTime = self.stableTime else {
                 return
             }
-            UserDefaults.standard.set(stableTime.toDictionary(), forKey: kDefaultsKey)
+            self.defaults.set(stableTime.toDictionary(), forKey: kDefaultsKey)
         }
     }
 
@@ -45,12 +46,15 @@ public struct Clock {
     /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
     ///                         the synchronization.
     /// - parameter samples:    The number of samples to be acquired from each server (default 4).
+    /// - parameter appGroupID: The shared app group your app and extensions use to share data. This will be
+    ///                         helpful if you want to use Kronos in an app extension context.
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:      A closure that will be called after the first valid date is calculated.
-    public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
+    public static func sync(from pool: String = "time.apple.com", samples: Int = 4, appGroupID: String? = nil,
                             first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
+        self.appGroupID = appGroupID
         self.loadFromDefaults()
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
@@ -75,12 +79,20 @@ public struct Clock {
     }
 
     private static func loadFromDefaults() {
-        guard let stored = UserDefaults.standard.value(forKey: kDefaultsKey) as? [String: TimeInterval],
+        guard let stored = self.defaults.value(forKey: kDefaultsKey) as? [String: TimeInterval],
             let previousStableTime = TimeFreeze(from: stored) else
         {
             self.stableTime = nil
             return
         }
         self.stableTime = previousStableTime
+    }
+
+    private static var defaults: UserDefaults {
+        if let appGroupID = self.appGroupID {
+            return UserDefaults(suiteName: appGroupID) ?? .standard
+        } else {
+            return UserDefaults.standard
+        }
     }
 }

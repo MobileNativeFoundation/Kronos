@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.2](https://github.com/lyft/Kronos/releases/tag/1.0.2)
+- Use app groups for `UserDefaults` if sharing time with an extension
+is desirable.
+
 ## [1.0.1](https://github.com/lyft/Kronos/releases/tag/1.0.1)
 - Restore previous time delta after reboot
 
