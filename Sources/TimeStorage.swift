@@ -7,6 +7,10 @@ public enum TimeStoragePolicy {
     /// Attempts to use the specified App Group ID (which is the String) to access shared storage.
     case appGroup(String)
 
+    /// Creates an instance
+    ///
+    /// - parameter appGroupID: The App Group ID that maps to a shared container for `UserDefaults`. If this
+    ///                         is nil, the resulting instance will be `.standard`
     public init(appGroupID: String?) {
         if let appGroupID = appGroupID {
             self = .appGroup(appGroupID)
@@ -16,10 +20,13 @@ public enum TimeStoragePolicy {
     }
 }
 
+/// Handles saving and retrieving instances of `TimeFreeze` for quick retrieval
 public struct TimeStorage {
     private var userDefaults: UserDefaults
     private let kDefaultsKey = "KronosStableTime"
 
+    /// The most recent stored `TimeFreeze`. Getting retrieves from the UserDefaults defined by the storage
+    /// policy. Setting sets the value in UserDefaults
     var stableTime: TimeFreeze? {
         get {
             guard let stored = self.userDefaults.value(forKey: kDefaultsKey) as? [String: TimeInterval],
@@ -40,6 +47,9 @@ public struct TimeStorage {
         }
     }
 
+    /// Creates an instance
+    ///
+    /// - parameter storagePolicy: Defines the storage location of `UserDefaults`
     public init(storagePolicy: TimeStoragePolicy) {
         switch storagePolicy {
         case .standard:
