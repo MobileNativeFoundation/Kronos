@@ -15,17 +15,15 @@ import Foundation
 /// print(Clock.now)
 /// ```
 public struct Clock {
-
-    private static let kDefaultsKey = "KronosStableTime"
-
     private static var stableTime: TimeFreeze? {
         didSet {
-            guard let stableTime = self.stableTime else {
-                return
-            }
-            UserDefaults.standard.set(stableTime.toDictionary(), forKey: kDefaultsKey)
+            self.storage.stableTime = self.stableTime
         }
     }
+
+    /// Determines where the most current stable time is stored. Use TimeStoragePolicy.appGroup to share
+    /// between your app and an extension.
+    public static var storage = TimeStorage(storagePolicy: .standard)
 
     /// The most accurate timestamp that we have so far (nil if no synchronization was done yet)
     public static var timestamp: TimeInterval? {
@@ -75,9 +73,7 @@ public struct Clock {
     }
 
     private static func loadFromDefaults() {
-        guard let stored = UserDefaults.standard.value(forKey: kDefaultsKey) as? [String: TimeInterval],
-            let previousStableTime = TimeFreeze(from: stored) else
-        {
+        guard let previousStableTime = self.storage.stableTime else {
             self.stableTime = nil
             return
         }
