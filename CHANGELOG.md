@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0](https://github.com/lyft/Kronos/releases/tag/2.0.0)
+- Update for Swift 4.1
+
 ## [1.0.2](https://github.com/lyft/Kronos/releases/tag/1.0.2)
 - Use app groups for `UserDefaults` if sharing time with an extension
 is desirable.
