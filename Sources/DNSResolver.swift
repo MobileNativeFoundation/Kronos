@@ -36,8 +36,8 @@ final class DNSResolver {
             }
 
             let IPs = (addresses.takeUnretainedValue() as NSArray)
-                .flatMap { $0 as? Data }
-                .flatMap { data -> InternetAddress? in
+                .compactMap { $0 as? Data }
+                .compactMap { data -> InternetAddress? in
                     return data.withUnsafeBytes { (pointer: UnsafePointer<sockaddr_storage>) in
                         return InternetAddress(storage: pointer)
                     }
