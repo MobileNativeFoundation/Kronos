@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Kronos'
-  s.version = '1.0.2'
+  s.version = '2.0.0'
   s.license = { :type => 'Apache License, Version 2.0', :file => 'LICENSE' }
   s.summary = 'Elegant NTP client in Swift'
   s.homepage = 'https://github.com/lyft/Kronos'
