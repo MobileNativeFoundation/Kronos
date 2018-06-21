@@ -54,13 +54,22 @@ public struct Clock {
     {
         self.loadFromDefaults()
 
+        var timerCompleted = false
         var timer: Timer? = nil
-        timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: false) { _ in
-            failure?()
+        if failure != nil {
+            timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: false) { _ in
+                timerCompleted = true
+                failure?()
+            }
         }
 
         NTPClient().query(pool: pool, numberOfSamples: samples, timeout: timeout) { offset, done, total in
-            timer?.invalidate()
+            if failure != nil {
+                if timerCompleted {
+                    return
+                }
+                timer?.invalidate()
+            }
 
             if let offset = offset {
                 self.stableTime = TimeFreeze(offset: offset)
