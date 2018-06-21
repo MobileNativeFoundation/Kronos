@@ -43,15 +43,25 @@ public struct Clock {
     /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
     ///                         the synchronization.
     /// - parameter samples:    The number of samples to be acquired from each server (default 4).
+    /// - parameter timeout:    The number of seconds until timeout (default 6).
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:      A closure that will be called after the first valid date is calculated.
-    public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
+    /// - parameter failure:    A closure that will be called when the NTP calls timed out.
+    public static func sync(from pool: String = "time.apple.com", samples: Int = 4, timeout: CFTimeInterval = 6.0,
                             first: ((Date, TimeInterval) -> Void)? = nil,
+                            failure: (() -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
         self.loadFromDefaults()
 
-        NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
+        var timer: Timer? = nil
+        timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: false) { _ in
+            failure?()
+        }
+
+        NTPClient().query(pool: pool, numberOfSamples: samples, timeout: timeout) { offset, done, total in
+            timer?.invalidate()
+
             if let offset = offset {
                 self.stableTime = TimeFreeze(offset: offset)
 
