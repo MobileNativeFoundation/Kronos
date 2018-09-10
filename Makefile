@@ -23,7 +23,7 @@ test-iOS:
 		xcodebuild \
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
-		-destination "name=iPhone 6s" \
+		-destination "name=iPhone X" \
 		test \
 		| xcpretty -ct
 
