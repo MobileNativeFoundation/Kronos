@@ -40,6 +40,6 @@ test-tvOS:
 		xcodebuild \
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
-		-destination "platform=tvOS Simulator,name=Apple TV,OS=11.0" \
+		-destination "platform=tvOS Simulator,name=Apple TV,OS=12.0" \
 		test \
 		| xcpretty -ct
