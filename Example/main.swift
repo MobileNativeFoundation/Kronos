@@ -109,17 +109,17 @@ final class ASCIIClock {
         nodelay(stdscr, true)
         loop: while runLoop.runMode(NSDefaultRunLoopMode, beforeDate: NSDate(timeIntervalSinceNow: 0.05)) {
             switch getch() {
-                case 0x73: // s
-                    self.drawClock(hour: 0, minute: 0, second: 0,
-                                   title: "Syncing", x: getmaxx(stdscr) / 3 - (kClockWidth / 2))
-                    Clock.sync()
+            case 0x73: // s
+                self.drawClock(hour: 0, minute: 0, second: 0,
+                               title: "Syncing", x: getmaxx(stdscr) / 3 - (kClockWidth / 2))
+                Clock.sync()
 
-                case 0x71: // q
-                    endwin()
-                    break loop
+            case 0x71: // q
+                endwin()
+                break loop
 
-                default:
-                    break
+            default:
+                break
             }
         }
     }

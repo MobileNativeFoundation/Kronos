@@ -79,7 +79,7 @@ final class NTPClient {
                timeout: CFTimeInterval = kDefaultTimeout, numberOfSamples: Int = kDefaultSamples,
                completion: @escaping (NTPPacket?) -> Void)
     {
-        var timer: Timer? = nil
+        var timer: Timer?
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
             defer {
                 // If we still have samples left; we'll keep querying the same server

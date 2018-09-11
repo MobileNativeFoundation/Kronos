@@ -13,14 +13,14 @@ enum LeapIndicator: Int8 {
     /// Human readable value of the leap warning.
     var description: String {
         switch self {
-            case .noWarning:
-               return "No warning"
-            case .sixtyOneSeconds:
-               return "Last minute of the day has 61 seconds"
-            case .fiftyNineSeconds:
-               return "Last minute of the day has 59 seconds"
-            case .alarm:
-               return "Unknown (clock unsynchronized)"
+        case .noWarning:
+            return "No warning"
+        case .sixtyOneSeconds:
+            return "Last minute of the day has 61 seconds"
+        case .fiftyNineSeconds:
+            return "Last minute of the day has 59 seconds"
+        case .alarm:
+            return "Unknown (clock unsynchronized)"
         }
     }
 }
@@ -36,17 +36,17 @@ enum Stratum: Int8 {
 
     init(value: Int8) {
         switch value {
-            case 0:
-                self = .unspecified
+        case 0:
+            self = .unspecified
 
-            case 1:
-                self = .primary
+        case 1:
+            self = .primary
 
-            case 0 ..< 15:
-                self = .secondary
+        case 0 ..< 15:
+            self = .secondary
 
-            default:
-                self = .invalid
+        default:
+            self = .invalid
         }
     }
 }
@@ -63,29 +63,29 @@ enum ClockSource {
 
     init(stratum: Stratum, sourceID: UInt32) {
         switch stratum {
-            case .unspecified:
-                self = .debug(id: sourceID)
+        case .unspecified:
+            self = .debug(id: sourceID)
 
-            case .primary:
-                let (id, description) = ClockSource.description(fromID: sourceID)
-                self = .referenceClock(id: id, description: description)
+        case .primary:
+            let (id, description) = ClockSource.description(fromID: sourceID)
+            self = .referenceClock(id: id, description: description)
 
-            case .secondary, .invalid:
-                self = .referenceIdentifier(id: sourceID)
+        case .secondary, .invalid:
+            self = .referenceIdentifier(id: sourceID)
         }
     }
 
     /// The id for the reference clock (IANA, stratum 1), debug (stratum 0) or referenceIdentifier
     var ID: UInt32 {
         switch self {
-            case .referenceClock(let id, _):
-                return id
+        case .referenceClock(let id, _):
+            return id
 
-            case .debug(let id):
-                return id
+        case .debug(let id):
+            return id
 
-            case .referenceIdentifier(let id):
-                return id
+        case .referenceIdentifier(let id):
+            return id
         }
     }
 
