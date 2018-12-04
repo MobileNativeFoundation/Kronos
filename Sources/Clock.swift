@@ -35,6 +35,15 @@ public struct Clock {
         return self.timestamp.map { Date(timeIntervalSince1970: $0) }
     }
 
+    /// The most accurate date annotated with the date when the NTP sync occurred.
+    public static var nowAnnotated: (now: Date, syncedOn: Date)? {
+        guard let freeze = self.stableTime else {
+            return nil
+        }
+
+        return (Date(timeIntervalSince1970: freeze.adjustedTimestamp), freeze.lastSyncDate)
+    }
+
     /// Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given
     /// closure will be called with the first valid NTP response which accuracy should be good enough for the
     /// initial clock adjustment but it might not be the most accurate representation. After calling the

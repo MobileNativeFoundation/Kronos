@@ -3,6 +3,7 @@ import Foundation
 private let kUptimeKey = "Uptime"
 private let kTimestampKey = "Timestamp"
 private let kOffsetKey = "Offset"
+private let kSyncInterval = "SyncInterval"
 
 struct TimeFreeze {
     private let uptime: TimeInterval
@@ -10,7 +11,7 @@ struct TimeFreeze {
     private let offset: TimeInterval
 
     /// The stable timestamp adjusted by the most acurrate offset known so far.
-    var adjustedTimestamp: TimeInterval? {
+    var adjustedTimestamp: TimeInterval {
         return self.offset + self.stableTimestamp
     }
 
@@ -20,7 +21,7 @@ struct TimeFreeze {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }
 
-    init(offset: TimeInterval) {
+    init(offset: TimeInterval, syncDate: Date = Date()) {
         self.offset = offset
         self.timestamp = currentTime()
         self.uptime = TimeFreeze.systemUptime()
@@ -38,12 +39,11 @@ struct TimeFreeze {
         let currentBoot = currentUptime - currentTimestamp
         let previousBoot = uptime - timestamp
         if rint(currentBoot) - rint(previousBoot) != 0 {
-            self.uptime = currentUptime
-            self.timestamp = currentTimestamp
-        } else {
-            self.uptime = uptime
-            self.timestamp = timestamp
+            return nil
         }
+
+        self.uptime = uptime
+        self.timestamp = timestamp
         self.offset = offset
     }
 

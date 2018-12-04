@@ -38,4 +38,23 @@ final class ClockTests: XCTestCase {
 
         self.waitForExpectations(timeout: 20)
     }
+
+
+    func testNTPSyncTime() {
+        let expectation = self.expectation(description: "Sync time is recorded on every sync")
+        var firstDate: Date?
+        Clock.sync(
+            first: { _, _ in
+                firstDate = Clock.nowAnnotated?.syncedOn
+            },
+            completion: { _, _ in
+                XCTAssertNotNil(firstDate)
+                XCTAssertNotNil(Clock.nowAnnotated?.syncedOn)
+                XCTAssertGreaterThan(Clock.nowAnnotated!.syncedOn.timeIntervalSince1970,
+                                     firstDate!.timeIntervalSince1970)
+                expectation.fulfill()
+            })
+
+        self.waitForExpectations(timeout: 20)
+    }
 }
