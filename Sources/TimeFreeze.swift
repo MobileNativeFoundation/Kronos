@@ -20,6 +20,14 @@ struct TimeFreeze {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }
 
+    /// Returns the time plus analytical metadata about the time.
+    ///
+    /// See explanation of fields in the comment for the FullTime struct fore more info.
+    var fullTime: FullTime? {
+        return FullTime(date: Date(timeIntervalSince1970: adjustedTimestamp),
+                        timeSinceLastNtpSync: TimeFreeze.systemUptime() - uptime)
+    }
+
     init(offset: TimeInterval) {
         self.offset = offset
         self.timestamp = currentTime()
