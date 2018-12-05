@@ -26,8 +26,20 @@ class TimeStorageTests: XCTestCase {
         var storage = TimeStorage(storagePolicy: .standard)
         let sampleFreeze = TimeFreeze(offset: 5000.32423)
         storage.stableTime = sampleFreeze
+
         let fromDefaults = storage.stableTime
         XCTAssertNotNil(fromDefaults)
         XCTAssertEqual(sampleFreeze.toDictionary(), fromDefaults!.toDictionary())
+    }
+
+    func testRetrievingTimeFreezeAfterReboot() {
+        let sampleFreeze = TimeFreeze(offset: 5000.32423)
+        var storedData = sampleFreeze.toDictionary()
+        storedData["Uptime"] = storedData["Uptime"]! + 10
+
+        let beforeRebootFreeze = TimeFreeze(from: sampleFreeze.toDictionary())
+        let afterRebootFreeze = TimeFreeze(from: storedData)
+        XCTAssertNil(afterRebootFreeze)
+        XCTAssertNotNil(beforeRebootFreeze)
     }
 }

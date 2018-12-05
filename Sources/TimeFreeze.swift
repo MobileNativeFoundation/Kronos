@@ -38,12 +38,11 @@ struct TimeFreeze {
         let currentBoot = currentUptime - currentTimestamp
         let previousBoot = uptime - timestamp
         if rint(currentBoot) - rint(previousBoot) != 0 {
-            self.uptime = currentUptime
-            self.timestamp = currentTimestamp
-        } else {
-            self.uptime = uptime
-            self.timestamp = timestamp
+            return nil
         }
+
+        self.uptime = uptime
+        self.timestamp = timestamp
         self.offset = offset
     }
 
