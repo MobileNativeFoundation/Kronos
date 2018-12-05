@@ -10,7 +10,7 @@ struct TimeFreeze {
     private let offset: TimeInterval
 
     /// The stable timestamp adjusted by the most acurrate offset known so far.
-    var adjustedTimestamp: TimeInterval? {
+    var adjustedTimestamp: TimeInterval {
         return self.offset + self.stableTimestamp
     }
 
