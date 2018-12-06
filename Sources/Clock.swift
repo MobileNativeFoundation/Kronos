@@ -1,7 +1,14 @@
 import Foundation
 
 /// Struct that has time + related metadata
-public typealias FullTime = (Date, TimeInterval)
+public typealias AnnotatedTime = (
+
+    /// Time that is being annotated
+    date: Date,
+
+    /// Amount of time that has passed since the last NTP sync; in other words, the NTP response age.
+    timeSinceLastNtpSync: TimeInterval
+)
 
 /// High level implementation for clock synchronization using NTP. All returned dates use the most accurate
 /// synchronization and it's not affected by clock changes. The NTP synchronization implementation has sub-
@@ -35,11 +42,17 @@ public struct Clock {
 
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
     public static var now: Date? {
-        return self.fullNow?.0
+        return self.annotatedlNow?.0
     }
 
-    public static var fullNow: FullTime? {
-        return self.stableTime?.fullTime
+    /// Same as `now` except with analytic metadata about the time
+    public static var annotatedlNow: AnnotatedTime? {
+        guard let stableTime = self.stableTime else {
+            return nil
+        }
+
+        return AnnotatedTime(date: Date(timeIntervalSince1970: stableTime.adjustedTimestamp),
+                             timeSinceLastNtpSync: stableTime.timeSinceLastNtpSync)
     }
 
     /// Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given

@@ -20,12 +20,9 @@ struct TimeFreeze {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }
 
-    /// Returns the time plus analytical metadata about the time.
-    ///
-    /// See explanation of fields in the comment for the FullTime struct fore more info.
-    var fullTime: FullTime? {
-        return FullTime(date: Date(timeIntervalSince1970: adjustedTimestamp),
-                        timeSinceLastNtpSync: TimeFreeze.systemUptime() - uptime)
+    /// Time interval between now and the time the NTP response represented by this TimeFreeze was received.
+    var timeSinceLastNtpSync: TimeInterval {
+        return TimeFreeze.systemUptime() - uptime
     }
 
     init(offset: TimeInterval) {
