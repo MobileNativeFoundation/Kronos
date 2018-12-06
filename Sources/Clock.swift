@@ -1,16 +1,7 @@
 import Foundation
 
 /// Struct that has time + related metadata
-public struct FullTime {
-    /// The most accurate timetstamp that we have so far
-    let date: Date
-
-    /// Amount of time that has passed since the last NTP sync; in other words, the NTP response age.
-    /// If the NTP response is one deserialized from disk, and we notice the phone has been rebooted since
-    /// serialization time, we can't know how old the response is, since we use the time-since-boot to measure
-    /// duration. Thus, in this case, this value will be nil.
-    let timeSinceLastNtpSync: TimeInterval?
-}
+public typealias FullTime = (Date, TimeInterval)
 
 /// High level implementation for clock synchronization using NTP. All returned dates use the most accurate
 /// synchronization and it's not affected by clock changes. The NTP synchronization implementation has sub-
@@ -44,7 +35,7 @@ public struct Clock {
 
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
     public static var now: Date? {
-        return self.fullNow?.date
+        return self.fullNow?.0
     }
 
     public static var fullNow: FullTime? {
