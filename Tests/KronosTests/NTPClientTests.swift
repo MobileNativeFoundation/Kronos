@@ -23,8 +23,7 @@ final class NTPClientTests: XCTestCase {
     }
 
     func testQueryPool() {
-        var expectation: XCTestExpectation? =
-            self.expectation(description: "Offset from ref clock to local clock are accurate")
+        let expectation = self.expectation(description: "Offset from ref clock to local clock are accurate")
         NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
 
@@ -32,8 +31,7 @@ final class NTPClientTests: XCTestCase {
             { offset2, _, _ in
                 XCTAssertNotNil(offset2)
                 XCTAssertLessThan(abs(offset! - offset2!), 0.10)
-                expectation?.fulfill()
-                expectation = nil
+                expectation.fulfill()
             }
         }
 
@@ -41,12 +39,10 @@ final class NTPClientTests: XCTestCase {
     }
 
     func testQueryPoolWithIPv6() {
-        var expectation: XCTestExpectation? =
-            self.expectation(description: "NTPClient queries a pool that supports IPv6")
-        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
+        let expectation = self.expectation(description: "NTPClient queries a pool that supports IPv6")
+        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
-            expectation?.fulfill()
-            expectation = nil
+            expectation.fulfill()
         }
 
         self.waitForExpectations(timeout: 10)
