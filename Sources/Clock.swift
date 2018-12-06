@@ -1,5 +1,15 @@
 import Foundation
 
+/// Struct that has time + related metadata
+public typealias AnnotatedTime = (
+
+    /// Time that is being annotated
+    date: Date,
+
+    /// Amount of time that has passed since the last NTP sync; in other words, the NTP response age.
+    timeSinceLastNtpSync: TimeInterval
+)
+
 /// High level implementation for clock synchronization using NTP. All returned dates use the most accurate
 /// synchronization and it's not affected by clock changes. The NTP synchronization implementation has sub-
 /// second accuracy but given that Darwin doesn't support microseconds on bootTime, dates don't have sub-
@@ -32,7 +42,17 @@ public struct Clock {
 
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
     public static var now: Date? {
-        return self.timestamp.map { Date(timeIntervalSince1970: $0) }
+        return self.annotatedlNow?.date
+    }
+
+    /// Same as `now` except with analytic metadata about the time
+    public static var annotatedlNow: AnnotatedTime? {
+        guard let stableTime = self.stableTime else {
+            return nil
+        }
+
+        return AnnotatedTime(date: Date(timeIntervalSince1970: stableTime.adjustedTimestamp),
+                             timeSinceLastNtpSync: stableTime.timeSinceLastNtpSync)
     }
 
     /// Syncs the clock using NTP. Note that the full synchronization could take a few seconds. The given

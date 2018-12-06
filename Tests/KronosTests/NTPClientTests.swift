@@ -40,7 +40,7 @@ final class NTPClientTests: XCTestCase {
 
     func testQueryPoolWithIPv6() {
         let expectation = self.expectation(description: "NTPClient queries a pool that supports IPv6")
-        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1) { offset, _, _ in
+        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
             expectation.fulfill()
         }

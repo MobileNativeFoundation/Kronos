@@ -20,6 +20,11 @@ struct TimeFreeze {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }
 
+    /// Time interval between now and the time the NTP response represented by this TimeFreeze was received.
+    var timeSinceLastNtpSync: TimeInterval {
+        return TimeFreeze.systemUptime() - uptime
+    }
+
     init(offset: TimeInterval) {
         self.offset = offset
         self.timestamp = currentTime()

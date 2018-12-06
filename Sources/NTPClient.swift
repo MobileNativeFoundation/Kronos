@@ -91,13 +91,14 @@ final class NTPClient {
 
             timer?.invalidate()
             guard
-                let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime) else
+                let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
+                PDU.isValidResponse() else
             {
                 completion(nil)
                 return
             }
 
-            completion(PDU.isValidResponse() ? PDU : nil)
+            completion(PDU)
         }
 
         let callback = unsafeBitCast(bridgeCallback, to: AnyObject.self)
