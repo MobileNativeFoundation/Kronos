@@ -42,7 +42,7 @@ public struct Clock {
 
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
     public static var now: Date? {
-        return self.annotatedlNow?.data
+        return self.annotatedlNow?.date
     }
 
     /// Same as `now` except with analytic metadata about the time
