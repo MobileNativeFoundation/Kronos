@@ -105,6 +105,9 @@ Then, run the following command:
 $ carthage update
 ```
 
+Looking for Kronos for your Android application? Check out [Kronos for Android](https://github.com/lyft/Kronos-Android)
+
+
 ## License
 
 Kronos is maintained by [Lyft](https://www.lyft.com/) and released under
