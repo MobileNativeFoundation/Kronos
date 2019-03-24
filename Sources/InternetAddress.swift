@@ -34,8 +34,8 @@ enum InternetAddress: Hashable {
         }
     }
 
-    var hashValue: Int {
-        return self.host?.hashValue ?? 0
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.host)
     }
 
     init?(storage: UnsafePointer<sockaddr_storage>) {
