@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 import PackageDescription
 
 let package = Package(
@@ -9,6 +9,5 @@ let package = Package(
     targets: [
         .target(name: "Kronos", path: "Sources"),
         .testTarget(name: "KronosTests", dependencies: ["Kronos"]),
-    ],
-    swiftLanguageVersions: [.v4, .v4_2]
+    ]
 )
