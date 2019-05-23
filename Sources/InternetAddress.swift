@@ -38,18 +38,15 @@ enum InternetAddress: Hashable {
         hasher.combine(self.host)
     }
 
-    init?(storage: UnsafePointer<sockaddr_storage>) {
-
-        switch Int32(storage.pointee.ss_family) {
+    init?(dataWithSockAddress data: NSData) {
+        let storage = sockaddr_storage.from(unsafeDataWithSockAddress: data)
+        switch Int32(storage.ss_family) {
         case AF_INET:
-            self = storage.withMemoryRebound(to: sockaddr_in.self, capacity: 1) { address in
-                InternetAddress.ipv4(address.pointee)
-            }
+            self = storage.withUnsafeAddress { InternetAddress.ipv4($0.pointee) }
 
         case AF_INET6:
-            self = storage.withMemoryRebound(to: sockaddr_in6.self, capacity: 1) { address in
-                InternetAddress.ipv6(address.pointee)
-            }
+            self = storage.withUnsafeAddress { InternetAddress.ipv6($0.pointee) }
+
         default:
             return nil
         }
@@ -76,4 +73,36 @@ enum InternetAddress: Hashable {
 /// Compare InternetAddress(es) by making sure the host representation are equal.
 func == (lhs: InternetAddress, rhs: InternetAddress) -> Bool {
     return lhs.host == rhs.host
+}
+
+// MARK: - sockaddr_storage helpers
+
+extension sockaddr_storage {
+    /// Creates a new storage value from a data type that cointains the memory layout of a sockaddr_t. This
+    /// is used to create sockaddr_storage(s) from some of the CF C functions such as `CFHostGetAddressing`.
+    ///
+    /// !!! WARNING: This method is unsafe and assumes the memory layout is of `sockaddr_t`. !!!
+    ///
+    /// - parameter data: The data to be interpreted as sockaddr
+    /// - returns: The newly created sockaddr_storage value
+    fileprivate static func from(unsafeDataWithSockAddress data: NSData) -> sockaddr_storage {
+        var storage = sockaddr_storage()
+        data.getBytes(&storage, length: data.length)
+        return storage
+    }
+
+    /// Calls a closure with traditional BSD Sockets address parameters.
+    ///
+    /// - parameter body: A closure to call with `self` referenced appropriately for calling
+    ///   BSD Sockets APIs that take an address.
+    ///
+    /// - throws: Any error thrown by `body`.
+    ///
+    /// - returns: Any result returned by `body`.
+    fileprivate func withUnsafeAddress<T, U>(_ body: (_ address: UnsafePointer<U>) -> T) -> T {
+        var storage = self
+        return withUnsafePointer(to: &storage) {
+            $0.withMemoryRebound(to: U.self, capacity: 1) { address in body(address) }
+        }
+    }
 }
