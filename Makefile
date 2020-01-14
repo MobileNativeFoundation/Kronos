@@ -23,7 +23,7 @@ test-iOS:
 		xcodebuild \
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
-		-destination "name=iPhone X" \
+		-destination "name=iPhone 11 Pro Max" \
 		test \
 		| xcpretty -ct
 
@@ -40,6 +40,6 @@ test-tvOS:
 		xcodebuild \
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
-		-destination "platform=tvOS Simulator,name=Apple TV,OS=12.2" \
+		-destination "platform=tvOS Simulator,name=Apple TV,OS=13.3" \
 		test \
 		| xcpretty -ct
