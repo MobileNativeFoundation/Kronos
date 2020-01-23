@@ -1,8 +1,8 @@
 <img src="https://cloud.githubusercontent.com/assets/232113/15371638/505de80a-1cf1-11e6-9e16-d462e02d9e45.png" height="140" />
 
 Kronos is an NTP client library written in Swift. It supports
-sub-seconds precision and provides an stable monotonic clock that won't
-be affected by clock changes.
+sub-seconds precision and provides a stable monotonic clock that won't
+be affected by changes in the clock.
 
 ## Example app
 
