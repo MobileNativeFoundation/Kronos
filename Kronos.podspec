@@ -6,6 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/lyft/Kronos'
   s.authors = { 'Martin Conte Mac Donell' => 'Reflejo@gmail.com' }
   s.source = { :git => 'https://github.com/Lyft/Kronos.git', :tag => s.version }
+  s.swift_version = '5'
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.9'
