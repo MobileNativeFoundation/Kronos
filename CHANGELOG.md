@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.0.1]
+## [4.1.0](https://github.com/lyft/Kronos/releases/tag/4.1.0)
+- Add assertion when app group storage fails
+
+## [4.0.1](https://github.com/lyft/Kronos/releases/tag/4.0.1)
 - Fix "Initialization of 'UnsafeBufferPointer<T>' results in a dangling buffer pointer" warnings
 
 ## [4.0.0](https://github.com/lyft/Kronos/releases/tag/4.0.0)
