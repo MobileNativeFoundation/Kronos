@@ -55,7 +55,9 @@ public struct TimeStorage {
         case .standard:
             self.userDefaults = .standard
         case .appGroup(let groupName):
-            self.userDefaults = UserDefaults(suiteName: groupName) ?? .standard
+            let sharedDefaults = UserDefaults(suiteName: groupName)
+            assert(sharedDefaults != nil, "Could not create UserDefaults for group: '\(groupName)'")
+            self.userDefaults = sharedDefaults ?? .standard
         }
     }
 }
