@@ -40,7 +40,7 @@ final class ASCIIClock {
         refresh()
 
         // Handle window resizing
-        let handleWinch: @convention(c) Int32 -> Void = { signal in
+        let handleWinch: @convention(c) Int32 -> Void = { _ in
             endwin()
             refresh()
             clear()

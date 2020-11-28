@@ -19,7 +19,7 @@ final class DNSResolver {
     static func resolve(host: String, timeout: TimeInterval = kDefaultTimeout,
                         completion: @escaping ([InternetAddress]) -> Void)
     {
-        let callback: CFHostClientCallBack = { host, hostinfo, error, info in
+        let callback: CFHostClientCallBack = { host, _, _, info in
             guard let info = info else {
                 return
             }

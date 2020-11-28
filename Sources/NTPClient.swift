@@ -149,7 +149,7 @@ final class NTPClient {
     {
         signal(SIGPIPE, SIG_IGN)
 
-        let callback: CFSocketCallBack = { socket, callbackType, address, data, info in
+        let callback: CFSocketCallBack = { socket, callbackType, _, data, info in
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
                 let PDU = packet.prepareToSend() as CFData
