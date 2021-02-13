@@ -30,7 +30,7 @@ enum Mode: Int8 {
     case reserved, symmetricActive, symmetricPassive, client, server, broadcast, reservedNTP, unknown
 }
 
-/// Mode representing the statrum level of the clock.
+/// Mode representing the stratum level of the clock.
 enum Stratum: Int8 {
     case unspecified, primary, secondary, invalid
 

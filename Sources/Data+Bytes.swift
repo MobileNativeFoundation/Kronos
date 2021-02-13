@@ -2,7 +2,7 @@ import Foundation
 
 extension Data {
 
-    /// Creates an Data instace based on a hex string (example: "ffff" would be <FF FF>).
+    /// Creates an Data instance based on a hex string (example: "ffff" would be <FF FF>).
     ///
     /// - parameter hex: The hex string without any spaces; should only have [0-9A-Fa-f].
     init?(hex: String) {
