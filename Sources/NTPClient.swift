@@ -67,7 +67,7 @@ final class NTPClient {
         }
     }
 
-    /// Query the given ntp server for the time exchange.
+    /// Query the given NTP server for the time exchange.
     ///
     /// - parameter ip:              Server socket address.
     /// - parameter port:            Server NTP port (default 123).

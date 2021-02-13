@@ -30,7 +30,7 @@ struct NTPPacket {
     /// The current connection mode.
     let mode: Mode
 
-    /// Mode representing the statrum level of the local clock.
+    /// Mode representing the stratum level of the local clock.
     let stratum: Stratum
 
     /// Indicates the maximum interval between successive messages, in seconds to the nearest power of two.

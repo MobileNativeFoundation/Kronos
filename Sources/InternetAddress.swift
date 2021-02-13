@@ -78,7 +78,7 @@ func == (lhs: InternetAddress, rhs: InternetAddress) -> Bool {
 // MARK: - sockaddr_storage helpers
 
 extension sockaddr_storage {
-    /// Creates a new storage value from a data type that cointains the memory layout of a sockaddr_t. This
+    /// Creates a new storage value from a data type that contains the memory layout of a sockaddr_t. This
     /// is used to create sockaddr_storage(s) from some of the CF C functions such as `CFHostGetAddressing`.
     ///
     /// !!! WARNING: This method is unsafe and assumes the memory layout is of `sockaddr_t`. !!!
