@@ -111,4 +111,4 @@ Looking for Kronos for your Android application? Check out [Kronos for Android](
 ## License
 
 Kronos is maintained by [Lyft](https://www.lyft.com/) and released under
-the Apache 2.0 license. See LICENSE[LICENSE] for details.
+the Apache 2.0 license. See [LICENSE](LICENSE) for details.
