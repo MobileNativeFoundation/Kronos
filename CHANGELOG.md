@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Kronos` adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.2.1](https://github.com/MobileNativeFoundation/Kronos/releases/tag/4.2.1)
+- Fix CocoaPods version
+
 ## [4.2.0](https://github.com/MobileNativeFoundation/Kronos/releases/tag/4.2.0)
 - Fix buffer overflow
 - Remove `VALID_ARCHS` for Apple Silicon support
