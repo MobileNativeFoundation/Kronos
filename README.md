@@ -6,7 +6,7 @@ be affected by changes in the clock.
 
 ## Example app
 
-[This](https://github.com/lyft/Kronos/blob/master/Example/main.swift) is an
+[This](https://github.com/MobileNativeFoundation/Kronos/blob/master/Example/main.swift) is an
 example app that displays the monotonic `Clock.now` on the left and the
 system clock (initially out of date) on the right.
 
@@ -96,7 +96,7 @@ $ swift build
 To integrate Kronos into your project using Carthage, specify it in your `Cartfile`:
 
 ```carthage
-github "lyft/Kronos"
+github "MobileNativeFoundation/Kronos"
 ```
 
 Then, run the following command:
@@ -106,9 +106,3 @@ $ carthage update
 ```
 
 Looking for Kronos for your Android application? Check out [Kronos for Android](https://github.com/lyft/Kronos-Android)
-
-
-## License
-
-Kronos is maintained by [Lyft](https://www.lyft.com/) and released under
-the Apache 2.0 license. See [LICENSE](LICENSE) for details.
