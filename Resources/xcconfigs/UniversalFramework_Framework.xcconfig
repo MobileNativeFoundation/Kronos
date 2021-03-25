@@ -23,8 +23,6 @@ TARGETED_DEVICE_FAMILY[sdk=appletv*]          = 3
 TARGETED_DEVICE_FAMILY[sdk=watchsimulator*]   = 4
 TARGETED_DEVICE_FAMILY[sdk=watch*]            = 4
 
-BUILD_LIBRARY_FOR_DISTRIBUTION                = YES
-
 ENABLE_BITCODE[sdk=macosx*]                   = NO
 ENABLE_BITCODE[sdk=iphonesimulator*]          = YES
 ENABLE_BITCODE[sdk=iphone*]                   = YES
