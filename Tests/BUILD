@@ -17,7 +17,7 @@ load(
     "tvos_application"
 )
 
-MINIMUM_IOS_VERSION = "8.0"
+MINIMUM_IOS_VERSION = "9.0"
 
 MINIMUM_MACOS_VERSION = "10.9"
 
@@ -37,13 +37,6 @@ genrule(
     """
 )
 
-genrule(
-    name = "ProcessedInfoPlist",
-    srcs = ["//Resources:InfoPlist"],
-    outs = ["GeneratedInfo.plist"],
-    cmd = "/usr/libexec/PlistBuddy -x $< -c \"Set :CFBundleExecutable Kronos\" -c \"Set :CFBundleIdentifier com.Lyft.Kronos\" -c \"Set :CFBundleVersion 1.0.0\" -c \"Print\" > $@"
-)
-
 swift_library(
     name = "lib",
     srcs = ["AppDelegate.swift"],
@@ -53,7 +46,7 @@ ios_application(
     name = "iOSTestApp",
     bundle_id = "com.Lyft.Kronos",
     families = ["iphone"],
-    infoplists = ["GeneratedInfo.plist"],
+    infoplists = ["Info.plist"],
     minimum_os_version = MINIMUM_IOS_VERSION,
     deps = [":lib"],
 )
@@ -74,7 +67,7 @@ macos_unit_test(
 tvos_application(
     name = "TVOSApplication",
     bundle_id = "com.Lyft.Kronos",
-    infoplists = ["GeneratedInfo.plist"],
+    infoplists = ["Info.plist"],
     minimum_os_version = MINIMUM_TVOS_VERSION,
     deps = [":lib"],
 )
