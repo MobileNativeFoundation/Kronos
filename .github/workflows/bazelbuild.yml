@@ -1,0 +1,18 @@
+name: Continuous Integration
+
+on: [pull_request]
+
+jobs:
+  macos:
+    name: macOS
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_11.3.app
+    - name: Test iOS
+      run: bazelisk test //Tests:KronosTestsiOS --apple_platform_type=ios
+    - name: Test MacOS
+      run: bazelisk test //Tests:KronosTestsMacOS --apple_platform_type=macos
+    - name: Test tvOS
+      run: bazelisk test //Tests:KronosTestsTVOS --apple_platform_type=tvos

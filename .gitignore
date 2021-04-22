@@ -20,7 +20,10 @@ build/
 Carthage/Build
 coverage.txt
 DerivedData
-Icon
+Icon
+
 run-tests
 xcuserdata
 Packages/
+
+bazel-*
