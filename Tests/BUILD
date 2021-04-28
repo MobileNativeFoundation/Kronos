@@ -48,6 +48,7 @@ ios_application(
     families = ["iphone"],
     infoplists = ["Info.plist"],
     minimum_os_version = MINIMUM_IOS_VERSION,
+    launch_storyboard = "Main.storyboard",
     deps = [":lib"],
 )
 
