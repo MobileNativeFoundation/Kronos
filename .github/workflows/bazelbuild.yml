@@ -19,5 +19,3 @@ jobs:
       run: bazelisk test //Tests:KronosTestsiOS --test_output=errors
     - name: Test MacOS
       run: bazelisk test //Tests:KronosTestsMacOS --test_output=errors
-    - name: Test tvOS
-      run: bazelisk test //Tests:KronosTestsTVOS --test_output=errors

@@ -21,7 +21,7 @@ MINIMUM_IOS_VERSION = "9.0"
 
 MINIMUM_MACOS_VERSION = "10.9"
 
-MINIMUM_TVOS_VERSION = "9.0"
+MINIMUM_TVOS_VERSION = "14.5"
 
 swift_library(
     name = "KronosTests",
@@ -63,19 +63,4 @@ macos_unit_test(
     name = "KronosTestsMacOS",
     deps = [":KronosTests"],
     minimum_os_version = MINIMUM_MACOS_VERSION
-)
-
-tvos_application(
-    name = "TVOSApplication",
-    bundle_id = "com.Lyft.Kronos",
-    infoplists = ["Info.plist"],
-    minimum_os_version = MINIMUM_TVOS_VERSION,
-    deps = [":lib"],
-)
-
-tvos_unit_test(
-    name = "KronosTestsTVOS",
-    deps = [":KronosTests"],
-    test_host = ":TVOSApplication",
-    minimum_os_version = MINIMUM_TVOS_VERSION
 )
