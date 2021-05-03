@@ -1,0 +1,21 @@
+name: Bazel Build
+
+on: [pull_request]
+
+env:
+   DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+
+jobs:
+  macos:
+    name: Bazel
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Test iOS
+      run: bazelisk test //Tests:KronosTestsiOS --test_output=errors
+    - name: Test MacOS
+      run: bazelisk test //Tests:KronosTestsMacOS --test_output=errors
