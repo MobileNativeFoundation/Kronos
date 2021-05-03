@@ -15,7 +15,5 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
-    - name: Test iOS
-      run: bazelisk test //Tests:KronosTestsiOS --test_output=errors
-    - name: Test MacOS
-      run: bazelisk test //Tests:KronosTestsMacOS --test_output=errors
+    - name: Build & Test
+      run: bazelisk test --build_tests_only //Tests:all
