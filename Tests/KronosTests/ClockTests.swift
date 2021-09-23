@@ -38,4 +38,24 @@ final class ClockTests: XCTestCase {
 
         self.waitForExpectations(timeout: 20)
     }
+
+    func testCustomQueue() {
+        let expectation = self.expectation(description: "Clock sync calls closure")
+        expectation.expectedFulfillmentCount = 2
+
+        let queue = DispatchQueue(label: "com.Lyft.Kronos.Test")
+
+        Clock.sync(
+            queue: queue,
+            first: { _, _ in
+                XCTAssertFalse(Thread.isMainThread)
+                expectation.fulfill()
+            },
+            completion: { _, _ in
+                XCTAssertFalse(Thread.isMainThread)
+                expectation.fulfill()
+            })
+
+        self.waitForExpectations(timeout: 20)
+    }
 }

@@ -63,25 +63,30 @@ public struct Clock {
     /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
     ///                         the synchronization.
     /// - parameter samples:    The number of samples to be acquired from each server (default 4).
+    /// - parameter queue:      The queue on which the completion handler is dispatched. (default `.main`).
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     /// - parameter first:      A closure that will be called after the first valid date is calculated.
-    public static func sync(from pool: String = "time.apple.com", samples: Int = 4,
+    public static func sync(from pool: String = "time.apple.com",
+                            samples: Int = 4,
+                            queue: DispatchQueue = .main,
                             first: ((Date, TimeInterval) -> Void)? = nil,
                             completion: ((Date?, TimeInterval?) -> Void)? = nil)
     {
         self.loadFromDefaults()
 
         NTPClient().query(pool: pool, numberOfSamples: samples) { offset, done, total in
-            if let offset = offset {
-                self.stableTime = TimeFreeze(offset: offset)
+            queue.async {
+                if let offset = offset {
+                    self.stableTime = TimeFreeze(offset: offset)
 
-                if done == 1, let now = self.now {
-                    first?(now, offset)
+                    if done == 1, let now = self.now {
+                        first?(now, offset)
+                    }
                 }
-            }
 
-            if done == total {
-                completion?(self.now, offset)
+                if done == total {
+                    completion?(self.now, offset)
+                }
             }
         }
     }
