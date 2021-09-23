@@ -51,7 +51,7 @@ public struct Clock {
             return nil
         }
 
-        return AnnotatedTime(date: Date(timeIntervalSince1970: stableTime.adjustedTimestamp),
+        return AnnotatedTime(date: stableTime.adjustedDate,
                              timeSinceLastNtpSync: stableTime.timeSinceLastNtpSync)
     }
 

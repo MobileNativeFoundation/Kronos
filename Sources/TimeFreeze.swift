@@ -4,19 +4,21 @@ private let kUptimeKey = "Uptime"
 private let kTimestampKey = "Timestamp"
 private let kOffsetKey = "Offset"
 
-struct TimeFreeze {
+public struct TimeFreeze {
     private let uptime: TimeInterval
     private let timestamp: TimeInterval
-    private let offset: TimeInterval
+
+    /// The time offset from NTP server.
+    public let offset: TimeInterval
 
     /// The stable timestamp adjusted by the most accurate offset known so far.
-    var adjustedTimestamp: TimeInterval {
+    public var adjustedTimestamp: TimeInterval {
         return self.offset + self.stableTimestamp
     }
 
     /// The stable timestamp (calculated based on the uptime); note that this doesn't have sub-seconds
     /// precision. See `systemUptime()` for more information.
-    var stableTimestamp: TimeInterval {
+    public var stableTimestamp: TimeInterval {
         return (TimeFreeze.systemUptime() - self.uptime) + self.timestamp
     }
 
@@ -25,7 +27,15 @@ struct TimeFreeze {
         return TimeFreeze.systemUptime() - uptime
     }
 
-    init(offset: TimeInterval) {
+    /// The stable current date adjusted by the most accurate offset known so far.
+    public var adjustedDate: Date {
+        return Date(timeIntervalSince1970: adjustedTimestamp)
+    }
+
+    /// Creates a TimeFreeze with the given NTP server offset.
+    /// 
+    /// - Parameter offset: The time offset from NTP server.
+    public init(offset: TimeInterval) {
         self.offset = offset
         self.timestamp = currentTime()
         self.uptime = TimeFreeze.systemUptime()
