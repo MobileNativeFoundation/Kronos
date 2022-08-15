@@ -151,9 +151,9 @@ struct NTPPacket {
     // MARK: - Private helpers
 
     private func dateToNTPFormat(_ time: TimeInterval) -> UInt64 {
-        let integer = UInt32(UInt64(time + kEpochDelta) & 0xffffffff)
+        let integer = UInt64(time + kEpochDelta) & 0xffffffff
         let decimal = modf(time).1 * 4294967296.0 // 2 ^ 32
-        return UInt64(integer) << 32 | UInt64(decimal)
+        return integer << 32 | UInt64(decimal)
     }
 
     private func intervalToNTPFormat(_ time: TimeInterval) -> UInt32 {
