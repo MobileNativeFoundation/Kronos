@@ -38,4 +38,19 @@ final class NTPPacketTests: XCTestCase {
         XCTAssertEqual(PDU?.originTime, 1463309493.2903223038)
         XCTAssertEqual(PDU?.receiveTime, 1463309483.7013499737)
     }
+
+    func testParseYear2036() {
+        let formatter = DateFormatter()
+        let hexWithRollover = "1b0004fa000100000001000000000000000000000000000000000000000000000000000" +
+                              "0000000000000000000000000"
+        formatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
+        let networkData = Data(hex: hexWithRollover)!
+        var PDU = try? NTPPacket(data: networkData, destinationTime: 0)
+        let referenceTime = PDU.map { Date(timeIntervalSince1970: $0.referenceTime) }
+        XCTAssertEqual(formatter.string(for: referenceTime), "2036-02-07 06:28:16")
+
+        // The rollover happens at 2^32 - epoch_delta = 2,085,978,496
+        XCTAssertEqual(PDU?.prepareToSend(transmitTime: 2085978496), networkData)
+    }
 }
