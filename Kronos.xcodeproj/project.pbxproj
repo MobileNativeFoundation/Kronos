@@ -23,6 +23,7 @@
 		930B39DD2051E6D300360BA2 /* TimeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DC2051E6D300360BA2 /* TimeStorage.swift */; };
 		930B39E02051F26500360BA2 /* TimeStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DE2051F25300360BA2 /* TimeStorageTests.swift */; };
 		C201748E1BD5509D00E4FE18 /* Kronos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20174831BD5509D00E4FE18 /* Kronos.framework */; };
+		F3D6F95F28B3BA590093BFA9 /* InternetAddressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D6F95E28B3BA590093BFA9 /* InternetAddressTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		C2C036D41C2B180D003FB853 /* UniversalFramework_Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Base.xcconfig; sourceTree = "<group>"; };
 		C2C036D51C2B180D003FB853 /* UniversalFramework_Framework.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Framework.xcconfig; sourceTree = "<group>"; };
 		C2C036D61C2B180D003FB853 /* UniversalFramework_Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Test.xcconfig; sourceTree = "<group>"; };
+		F3D6F95E28B3BA590093BFA9 /* InternetAddressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetAddressTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 			children = (
 				26447D851D6E54FF00159BEE /* ClockTests.swift */,
 				26447D861D6E54FF00159BEE /* DNSResolverTests.swift */,
+				F3D6F95E28B3BA590093BFA9 /* InternetAddressTests.swift */,
 				26447D871D6E54FF00159BEE /* NTPClientTests.swift */,
 				26447D881D6E54FF00159BEE /* NTPPacketTests.swift */,
 				930B39DE2051F25300360BA2 /* TimeStorageTests.swift */,
@@ -247,6 +250,7 @@
 				26447D8B1D6E54FF00159BEE /* NTPClientTests.swift in Sources */,
 				26447D891D6E54FF00159BEE /* ClockTests.swift in Sources */,
 				26447D8A1D6E54FF00159BEE /* DNSResolverTests.swift in Sources */,
+				F3D6F95F28B3BA590093BFA9 /* InternetAddressTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +435,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -449,6 +454,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

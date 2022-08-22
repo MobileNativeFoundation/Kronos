@@ -38,6 +38,7 @@ final class DNSResolver {
             let IPs = (addresses.takeUnretainedValue() as NSArray)
                 .compactMap { $0 as? NSData }
                 .compactMap(InternetAddress.init)
+                .filter { ip in !ip.isPrivate } // to avoid querying private IPs, see: https://github.com/MobileNativeFoundation/Kronos/issues/94
 
             resolver.completion?(IPs)
             retainedSelf.release()
