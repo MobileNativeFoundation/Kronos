@@ -106,3 +106,5 @@ $ carthage update
 ```
 
 Looking for Kronos for your Android application? Check out [Kronos for Android](https://github.com/lyft/Kronos-Android)
+
+Looking for Kronos for your Kotlin Multiplatform application? Check out [Kronos Multiplatform Library](https://github.com/softartdev/Kronos-Multiplatform)
