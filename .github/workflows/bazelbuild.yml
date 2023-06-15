@@ -8,13 +8,9 @@ env:
 jobs:
   macos:
     name: Bazel
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7
     - name: Test iOS
       run: bazelisk test //Tests:KronosTestsiOS --test_output=errors
     - name: Test MacOS

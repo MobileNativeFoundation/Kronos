@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   macos:
     name: macOS
-    runs-on: macOS-latest
+    runs-on: macOS-13
     strategy:
       matrix:
         action:
