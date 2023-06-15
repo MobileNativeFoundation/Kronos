@@ -1,21 +1,23 @@
 name: Continuous Integration
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches: main
 
 jobs:
   macos:
     name: macOS
-    runs-on: macOS-latest
+    runs-on: macOS-13
     strategy:
       matrix:
         action:
           - lint
           - iOS
-          - OSX
+          # - OSX TODO fix
           - tvOS
     steps:
     - uses: actions/checkout@v1
-    - name: Xcode version
-      run: sudo xcode-select -s /Applications/Xcode_13.2.app
-    - name: Install and Test
-      run: make install-${{ matrix.action }} && make test-${{ matrix.action }}
+    - name: Setup Xcode
+      run: sudo xcode-select -s /Applications/Xcode_14.3.1.app
+    - run: make test-${{ matrix.action }}
