@@ -1,20 +1,5 @@
-# Install Tasks
-
-install-iOS:
-	true
-
-install-OSX:
-	true
-
-install-tvOS:
-	true
-
-install-lint:
-	brew install swiftlint || true
-
-# Run Tasks
-
 test-lint:
+	brew install swiftlint || true
 	swiftlint lint --strict 2>/dev/null
 
 test-iOS:
@@ -23,16 +8,14 @@ test-iOS:
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
 		-destination "name=iPhone 11 Pro Max" \
-		test \
-		| xcpretty -ct
+		test
 
 test-OSX:
 	set -o pipefail && \
 		xcodebuild \
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
-		test \
-		| xcpretty -ct
+		test
 
 test-tvOS:
 	set -o pipefail && \
@@ -40,5 +23,4 @@ test-tvOS:
 		-project Kronos.xcodeproj \
 		-scheme Kronos \
 		-destination "platform=tvOS Simulator,name=Apple TV" \
-		test \
-		| xcpretty -ct
+		test
