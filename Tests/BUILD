@@ -50,6 +50,7 @@ ios_application(
 ios_unit_test(
     name = "KronosTestsiOS",
     minimum_os_version = MINIMUM_IOS_VERSION,
+    runner = "@build_bazel_rules_apple//apple/testing/default_runner:ios_xctestrun_ordered_runner",
     test_host = ":iOSTestApp",
     deps = [":KronosTests"],
 )
