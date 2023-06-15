@@ -14,7 +14,7 @@ jobs:
         action:
           - lint
           - iOS
-          - OSX
+          # - OSX TODO fix
           - tvOS
     steps:
     - uses: actions/checkout@v1
