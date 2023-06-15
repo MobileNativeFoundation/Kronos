@@ -47,62 +47,37 @@ NSTimer.scheduledTimerWithTimeInterval(1.0, target: self,
 
 ## Installation
 
-> **Embedded frameworks require a minimum deployment target of iOS 8 or OS
-> X Mavericks (10.9).**
+### [CocoaPods](http://cocoapods.org)
 
-### CocoaPods
-
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
-You can install it with the following command:
-
-```bash
-$ gem install cocoapods
-```
-
-> CocoaPods 0.39.0+ is required to build Kronos.
-
-To integrate Kronos into your Xcode project using CocoaPods, specify it in
-your `Podfile`:
+Add Kronos to your `Podfile`:
 
 ```ruby
-platform :ios, '8.0'
-use_frameworks!
-
 pod 'Kronos'
 ```
 
-Then, run the following command:
+### Swift Package Manager
+
+Add Kronos to your `Pacakge.swift`:
 
 ```bash
-$ pod install
+.package(name: "Kronos", url: "https://github.com/MobileNativeFoundation/Kronos.git", .upToNextMajor(from: "TAG")),
 ```
 
-### Swift package manager (experimental)
+### Bazel
 
-[Swift PM](https://github.com/apple/swift-package-manager/) is a tool for
-managing distribution of source code.
+Add Kronos to your `WORKSPACE`:
 
-To integrate Kronos into your project using Swift PM use:
-
-```bash
-$ export SWIFT_EXEC=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc
-$ swift build
+```bzl
+http_archive(
+    name = "Kronos",
+    sha256 = "",
+    strip_prefix = "Kronos-TAG/",
+    url = "https://github.com/MobileNativeFoundation/Kronos/archive/TAG.tar.gz",
+)
 ```
 
-### Carthage
+Then depend on `@Kronos//:Kronos`
 
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Cocoa. You can install it by following the instructions [here](https://github.com/Carthage/Carthage#installing-carthage).
+### Android
 
-To integrate Kronos into your project using Carthage, specify it in your `Cartfile`:
-
-```carthage
-github "MobileNativeFoundation/Kronos"
-```
-
-Then, run the following command:
-
-```bash
-$ carthage update
-```
-
-Looking for Kronos for your Android application? Check out [Kronos for Android](https://github.com/lyft/Kronos-Android)
+Check out [Kronos for Android](https://github.com/lyft/Kronos-Android)
