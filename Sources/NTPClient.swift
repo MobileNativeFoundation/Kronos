@@ -21,11 +21,13 @@ final class NTPClient {
     /// - parameter port:            Server NTP port (default 123).
     /// - parameter version:         NTP version to use (default 3).
     /// - parameter numberOfSamples: The number of samples to be acquired from each server (default 4).
+    /// - parameter preferIPv4:      Prefer IPv4 addresses to query if both IPv4 and IPv6 addresses are returned.
     /// - parameter maximumServers:  The maximum number of servers to be queried (default 5).
     /// - parameter timeout:         The individual timeout for each of the NTP operations.
     /// - parameter completion:      A closure that will be response PDU on success or nil on error.
     func query(pool: String = "time.apple.com", version: Int8 = 3, port: Int = 123,
-               numberOfSamples: Int = kDefaultSamples, maximumServers: Int = kMaximumNTPServers,
+               numberOfSamples: Int = kDefaultSamples, preferIPv4: Bool = false,
+               maximumServers: Int = kMaximumNTPServers,
                timeout: CFTimeInterval = kDefaultTimeout,
                progress: @escaping (TimeInterval?, Int, Int) -> Void)
     {
@@ -59,9 +61,13 @@ final class NTPClient {
             if addresses.count == 0 {
                 return progress(nil, 0, 0)
             }
+            
+            let addressesToQuery = preferIPv4 && !addresses.filter({ $0.family == PF_INET }).isEmpty
+                ? addresses.filter({ $0.family == PF_INET })
+                : addresses
 
-            let totalServers = min(addresses.count, maximumServers)
-            for address in addresses[0 ..< totalServers] {
+            let totalServers = min(addressesToQuery.count, maximumServers)
+            for address in addressesToQuery[0 ..< totalServers] {
                 queryIPAndStoreResult(address, totalServers * numberOfSamples)
             }
         }
