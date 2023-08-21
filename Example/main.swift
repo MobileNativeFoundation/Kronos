@@ -10,7 +10,7 @@ private let kLEDDigits: [Int32] = [
 ]
 
 private struct Curses {
-    static func clear(x x: Int32, y: Int32, width: Int32, height: Int32) {
+    static func clear(x: Int32, y: Int32, width: Int32, height: Int32) {
         for x in x ..< x + width {
             for y in y ..< y + height {
                 Curses.mvprintw(y, x, " ")
@@ -86,7 +86,7 @@ final class ASCIIClock {
         }
     }
 
-    private func drawClock(hour hour: Int, minute: Int, second: Int, title: String, x: Int32) {
+    private func drawClock(hour: Int, minute: Int, second: Int, title: String, x: Int32) {
         let y: Int32 = getmaxy(stdscr) / 2 - 1
 
         Curses.clear(x: x, y: y - 1, width: Int32(kClockWidth), height: 5)
