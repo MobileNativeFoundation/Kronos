@@ -5,6 +5,7 @@ let package = Package(
     name: "Kronos",
     products: [
         .library(name: "Kronos", targets: ["Kronos"]),
+        .library(name: "Kronos-Dynamic", type: .dynamic, targets: ["Kronos"]),
     ],
     targets: [
         .target(name: "Kronos", path: "Sources"),
