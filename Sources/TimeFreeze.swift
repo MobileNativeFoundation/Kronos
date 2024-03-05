@@ -7,7 +7,7 @@ private let kOffsetKey = "Offset"
 struct TimeFreeze {
     private let uptime: TimeInterval
     private let timestamp: TimeInterval
-    private let offset: TimeInterval
+    let offset: TimeInterval
 
     /// The stable timestamp adjusted by the most accurate offset known so far.
     var adjustedTimestamp: TimeInterval {
