@@ -24,14 +24,17 @@ public enum Clock2 {
     /// closure will be called with the first valid NTP response which accuracy should be good enough for the
     /// initial clock adjustment but it might not be the most accurate representation. After calling the
     /// closure this method will continue syncing with multiple servers and multiple passes.
-    /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
+    /// - parameter completion:
+    ///     A closure that will be called after _all_ the NTP calls are finished.
+    ///     This will be called from main thread.
     @MainActor
-    public static func sync(completion: (@MainActor (TimeInterval?) -> Void)? = nil) {
+    public static func sync(completion: SyncCallback? = nil) {
         assert(Thread.isMainThread)
         let defaultPool = "time.apple.com"
         let defaultSampleCount = 4
         sync(from: defaultPool, samples: defaultSampleCount, completion: completion)
     }
+    public typealias SyncCallback = (TimeInterval?) -> Void
     
 //    @MainActor
 //    public static func synchronizeTimeWithNTPServers() async {
@@ -53,17 +56,35 @@ public enum Clock2 {
         protection.unlock()
     }
 
+    /// Offset between local clock and real-world NTP clock.
+    /// - Note: 
+    ///     This function is thread-safe. Can be called from any thread concurrently.
+    ///     This is mainly provided to support storing/restoring of clock state.
+    public static var offset: TimeInterval? {
+        get {
+            protection.lock()
+            let localCopy = latestOffset
+            protection.unlock()
+            return localCopy
+        }
+        set {
+            protection.lock()
+            latestOffset = newValue
+            protection.unlock()
+        }
+    }
     
     /// The most accurate date that we have so far (nil if no synchronization was done yet)
     ///
     /// - Note: This function is thread-safe. Can be called from any thread concurrently.
     public static var now: Date? {
         protection.lock()
-        let localCopiedOffset = latestOffset
+        let localCopy = latestOffset
         protection.unlock()
-        guard let latestOffset = localCopiedOffset else { return nil }
+        guard let latestOffset = localCopy else { return nil }
         return Date(timeIntervalSince1970: TimeFreeze(offset: latestOffset).adjustedTimestamp)
     }
+    
     
     /// Determines where the most current stable time is stored. Use TimeStoragePolicy.appGroup to share
     /// between your app and an extension.
@@ -77,12 +98,12 @@ public enum Clock2 {
     ///
     /// - parameter pool:       NTP pool that will be resolved into multiple NTP servers that will be used for
     ///                         the synchronization.
-    /// - parameter samples:    The number of samples to be acquired from each server (default 4).
+    /// - parameter samples:    The number of samples to be acquired from each server.
     /// - parameter completion: A closure that will be called after _all_ the NTP calls are finished.
     @MainActor
     private static func sync(
-        from pool: String = "time.apple.com", 
-        samples: Int = 4,
+        from pool: String,
+        samples: Int,
         completion: ((TimeInterval?) -> Void)? = nil)
     {
         assert(Thread.isMainThread)
