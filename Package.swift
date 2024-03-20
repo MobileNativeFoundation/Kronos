@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -7,7 +7,11 @@ let package = Package(
         .library(name: "Kronos", targets: ["Kronos"]),
     ],
     targets: [
-        .target(name: "Kronos", path: "Sources"),
+        .target(
+            name: "Kronos",
+            path: "Sources",
+            resources: [.process("PrivacyInfo.xcprivacy")]
+        ),
         .testTarget(name: "KronosTests", dependencies: ["Kronos"]),
     ]
 )

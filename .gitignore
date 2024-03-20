@@ -27,3 +27,6 @@ xcuserdata
 Packages/
 
 bazel-*
+
+# Swift Package Manager
+.swiftpm/

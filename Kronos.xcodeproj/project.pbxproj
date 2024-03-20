@@ -49,6 +49,7 @@
 		26447D861D6E54FF00159BEE /* DNSResolverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DNSResolverTests.swift; sourceTree = "<group>"; };
 		26447D871D6E54FF00159BEE /* NTPClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPClientTests.swift; sourceTree = "<group>"; };
 		26447D881D6E54FF00159BEE /* NTPPacketTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NTPPacketTests.swift; sourceTree = "<group>"; };
+		5DB5A05F2BAAF67D0069CCF9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		930B39DC2051E6D300360BA2 /* TimeStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeStorage.swift; sourceTree = "<group>"; };
 		930B39DE2051F25300360BA2 /* TimeStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeStorageTests.swift; sourceTree = "<group>"; };
 		C20174831BD5509D00E4FE18 /* Kronos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kronos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +123,7 @@
 				26447D7A1D6E54D400159BEE /* NTPProtocol.swift */,
 				26447D7B1D6E54D400159BEE /* TimeFreeze.swift */,
 				930B39DC2051E6D300360BA2 /* TimeStorage.swift */,
+				5DB5A05F2BAAF67D0069CCF9 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
