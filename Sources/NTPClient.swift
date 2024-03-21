@@ -56,7 +56,6 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
-            print(addresses)
             if addresses.count == 0 {
                 return progress(nil, 0, 0)
             }
@@ -91,10 +90,13 @@ final class NTPClient {
             }
 
             timer?.invalidate()
+            print(data)
+            print(try? NTPPacket(data: data, destinationTime: destinationTime))
             guard
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
                 PDU.isValidResponse() else
             {
+                print("womp womp")
                 completion(nil)
                 return
             }
