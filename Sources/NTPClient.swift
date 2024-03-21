@@ -81,6 +81,7 @@ final class NTPClient {
     {
         var timer: Timer?
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
+            print("wat")
             defer {
                 // If we still have samples left; we'll keep querying the same server
                 if numberOfSamples > 1 {
@@ -90,13 +91,10 @@ final class NTPClient {
             }
 
             timer?.invalidate()
-            print(String(describing: data))
-            print(String(describing: try? NTPPacket(data: data!, destinationTime: destinationTime)))
             guard
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
                 PDU.isValidResponse() else
             {
-                print("womp womp")
                 completion(nil)
                 return
             }
