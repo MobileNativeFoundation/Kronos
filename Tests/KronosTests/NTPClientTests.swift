@@ -10,7 +10,6 @@ final class NTPClientTests: XCTestCase {
             XCTAssertGreaterThan(addresses.count, 0)
 
             NTPClient().query(ip: addresses.first!, version: 3, numberOfSamples: 1) { PDU in
-                print(Thread.callStackSymbols)
                 XCTAssertNotNil(PDU)
 
                 XCTAssertGreaterThanOrEqual(PDU!.version, 3)

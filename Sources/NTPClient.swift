@@ -95,10 +95,12 @@ final class NTPClient {
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
                 PDU.isValidResponse() else
             {
+                print("nil")
                 completion(nil)
                 return
             }
 
+            print(PDU)
             completion(PDU)
         }
 
