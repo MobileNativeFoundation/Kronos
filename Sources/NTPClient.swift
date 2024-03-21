@@ -90,8 +90,8 @@ final class NTPClient {
             }
 
             timer?.invalidate()
-            print(data)
-            print(try? NTPPacket(data: data, destinationTime: destinationTime))
+            print(String(describing: data))
+            print(String(describing: try? NTPPacket(data: data!, destinationTime: destinationTime)))
             guard
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
                 PDU.isValidResponse() else
