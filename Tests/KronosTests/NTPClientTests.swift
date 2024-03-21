@@ -19,7 +19,7 @@ final class NTPClientTests: XCTestCase {
             }
         }
 
-        self.waitForExpectations(timeout: 10)
+        self.waitForExpectations(timeout: 20)
     }
 
     func testQueryPool() {
@@ -27,7 +27,7 @@ final class NTPClientTests: XCTestCase {
         NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
             XCTAssertNotNil(offset)
 
-            NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1)
+            NTPClient().query(pool: "0.pool.ntp.org", numberOfSamples: 1, maximumServers: 1, timeout: 20)
             { offset2, _, _ in
                 XCTAssertNotNil(offset2)
                 XCTAssertLessThan(abs(offset! - offset2!), 0.10)
@@ -35,16 +35,17 @@ final class NTPClientTests: XCTestCase {
             }
         }
 
-        self.waitForExpectations(timeout: 10)
+        self.waitForExpectations(timeout: 20)
     }
 
     func testQueryPoolWithIPv6() {
         let expectation = self.expectation(description: "NTPClient queries a pool that supports IPv6")
-        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1, maximumServers: 1) { offset, _, _ in
+        NTPClient().query(pool: "2.pool.ntp.org", numberOfSamples: 1, maximumServers: 1, timeout: 20)
+        { offset, _, _ in
             XCTAssertNotNil(offset)
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 10)
+        self.waitForExpectations(timeout: 20)
     }
 }
