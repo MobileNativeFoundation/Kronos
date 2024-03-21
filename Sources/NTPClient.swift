@@ -56,6 +56,7 @@ final class NTPClient {
         }
 
         DNSResolver.resolve(host: pool) { addresses in
+            print(addresses)
             if addresses.count == 0 {
                 return progress(nil, 0, 0)
             }
