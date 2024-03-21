@@ -81,7 +81,6 @@ final class NTPClient {
     {
         var timer: Timer?
         let bridgeCallback: ObjCCompletionType = { data, destinationTime in
-            print("wat")
             defer {
                 // If we still have samples left; we'll keep querying the same server
                 if numberOfSamples > 1 {
@@ -95,13 +94,10 @@ final class NTPClient {
                 let data = data, let PDU = try? NTPPacket(data: data, destinationTime: destinationTime),
                 PDU.isValidResponse() else
             {
-                print("nil")
-                print(String(describing: data))
                 completion(nil)
                 return
             }
 
-            print(PDU)
             completion(PDU)
         }
 
@@ -154,6 +150,7 @@ final class NTPClient {
         signal(SIGPIPE, SIG_IGN)
 
         let callback: CFSocketCallBack = { socket, callbackType, _, data, info in
+            print(data)
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
                 let PDU = packet.prepareToSend() as CFData
