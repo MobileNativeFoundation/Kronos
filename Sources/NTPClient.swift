@@ -96,6 +96,7 @@ final class NTPClient {
                 PDU.isValidResponse() else
             {
                 print("nil")
+                print(String(describing: data ?? "nil"))
                 completion(nil)
                 return
             }
