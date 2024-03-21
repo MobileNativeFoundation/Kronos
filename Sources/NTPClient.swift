@@ -150,14 +150,15 @@ final class NTPClient {
         signal(SIGPIPE, SIG_IGN)
 
         let callback: CFSocketCallBack = { socket, callbackType, _, data, info in
-            print(callbackType)
-            print(data)
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
                 let PDU = packet.prepareToSend() as CFData
                 CFSocketSendData(socket, nil, PDU, kDefaultTimeout)
                 return
             }
+
+            print(callbackType)
+            print(data)
 
             guard let info = info else {
                 return
