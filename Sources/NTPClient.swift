@@ -150,6 +150,7 @@ final class NTPClient {
         signal(SIGPIPE, SIG_IGN)
 
         let callback: CFSocketCallBack = { socket, callbackType, _, data, info in
+            print(callbackType)
             print(data)
             if callbackType == .writeCallBack {
                 var packet = NTPPacket()
