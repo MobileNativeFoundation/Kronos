@@ -14,5 +14,5 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/*.swift'
   
-  s.resource_bundles = {'Kronos' => ['Source/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'Kronos' => ['Sources/PrivacyInfo.xcprivacy']}
 end
