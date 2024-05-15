@@ -20,6 +20,7 @@
 		26447D8A1D6E54FF00159BEE /* DNSResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D861D6E54FF00159BEE /* DNSResolverTests.swift */; };
 		26447D8B1D6E54FF00159BEE /* NTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D871D6E54FF00159BEE /* NTPClientTests.swift */; };
 		26447D8C1D6E54FF00159BEE /* NTPPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26447D881D6E54FF00159BEE /* NTPPacketTests.swift */; };
+		5D6654E82BF520FA00FCE215 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5DB5A05F2BAAF67D0069CCF9 /* PrivacyInfo.xcprivacy */; };
 		930B39DD2051E6D300360BA2 /* TimeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DC2051E6D300360BA2 /* TimeStorage.swift */; };
 		930B39E02051F26500360BA2 /* TimeStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DE2051F25300360BA2 /* TimeStorageTests.swift */; };
 		C201748E1BD5509D00E4FE18 /* Kronos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20174831BD5509D00E4FE18 /* Kronos.framework */; };
@@ -156,6 +157,7 @@
 			buildConfigurationList = C20174971BD5509D00E4FE18 /* Build configuration list for PBXNativeTarget "Kronos" */;
 			buildPhases = (
 				C201747E1BD5509D00E4FE18 /* Sources */,
+				5D6654E72BF520F600FCE215 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -221,6 +223,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5D6654E72BF520F600FCE215 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D6654E82BF520FA00FCE215 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C201747E1BD5509D00E4FE18 /* Sources */ = {
