@@ -157,6 +157,9 @@ final class NTPClient {
                 return
             }
 
+            print(callbackType)
+            print(data)
+
             guard let info = info else {
                 return
             }
