@@ -24,6 +24,7 @@
 		930B39DD2051E6D300360BA2 /* TimeStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DC2051E6D300360BA2 /* TimeStorage.swift */; };
 		930B39E02051F26500360BA2 /* TimeStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930B39DE2051F25300360BA2 /* TimeStorageTests.swift */; };
 		C201748E1BD5509D00E4FE18 /* Kronos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20174831BD5509D00E4FE18 /* Kronos.framework */; };
+		E5E7A7702BFE559F0025D9D0 /* UnfairLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E7A76F2BFE559F0025D9D0 /* UnfairLock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		C2C036D41C2B180D003FB853 /* UniversalFramework_Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Base.xcconfig; sourceTree = "<group>"; };
 		C2C036D51C2B180D003FB853 /* UniversalFramework_Framework.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Framework.xcconfig; sourceTree = "<group>"; };
 		C2C036D61C2B180D003FB853 /* UniversalFramework_Test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = UniversalFramework_Test.xcconfig; sourceTree = "<group>"; };
+		E5E7A76F2BFE559F0025D9D0 /* UnfairLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnfairLock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 				26447D7B1D6E54D400159BEE /* TimeFreeze.swift */,
 				930B39DC2051E6D300360BA2 /* TimeStorage.swift */,
 				5DB5A05F2BAAF67D0069CCF9 /* PrivacyInfo.xcprivacy */,
+				E5E7A76F2BFE559F0025D9D0 /* UnfairLock.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -247,6 +250,7 @@
 				26447D7E1D6E54D400159BEE /* InternetAddress.swift in Sources */,
 				26447D811D6E54D400159BEE /* NTPClient.swift in Sources */,
 				26447D7F1D6E54D400159BEE /* Data+Bytes.swift in Sources */,
+				E5E7A7702BFE559F0025D9D0 /* UnfairLock.swift in Sources */,
 				26447D841D6E54D400159BEE /* TimeFreeze.swift in Sources */,
 				26447D821D6E54D400159BEE /* NTPPacket.swift in Sources */,
 				26447D801D6E54D400159BEE /* NSTimer+ClosureKit.swift in Sources */,

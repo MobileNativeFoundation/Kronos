@@ -25,9 +25,20 @@ public typealias AnnotatedTime = (
 /// print(Clock.now)
 /// ```
 public struct Clock {
+    private static let lock = UnfairLock()
+
+    private static var _stableTime: TimeFreeze?
     private static var stableTime: TimeFreeze? {
-        didSet {
-            self.storage.stableTime = self.stableTime
+        get {
+            self.lock.around {
+                return self._stableTime
+            }
+        }
+        set {
+            self.lock.around {
+                self._stableTime = newValue
+                self.storage.stableTime = newValue
+            }
         }
     }
 
