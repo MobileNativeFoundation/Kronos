@@ -51,29 +51,25 @@ final class DNSResolver {
                                                 retain: nil, release: nil, copyDescription: kCopyNoOperation)
 
         let hostReference = CFHostCreateWithName(kCFAllocatorDefault, host as CFString).takeUnretainedValue()
-        resolver.timer = Timer.scheduledTimer(timeInterval: timeout, target: resolver,
-                                              selector: #selector(DNSResolver.onTimeout),
-                                              userInfo: hostReference, repeats: false)
+        
+        resolver.timer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { [unowned resolver] _ in
+            resolver.onTimeout(hostReference: hostReference)
+        }
 
         CFHostSetClient(hostReference, callback, &clientContext)
         CFHostScheduleWithRunLoop(hostReference, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         CFHostStartInfoResolution(hostReference, .addresses, nil)
     }
 
-    @objc
-    private func onTimeout() {
+    private func onTimeout(hostReference: CFHost) {
         defer {
             self.completion?([])
+            self.timer = nil
 
             // Manually release the previously retained self.
             Unmanaged.passUnretained(self).release()
         }
 
-        guard let userInfo = self.timer?.userInfo else {
-            return
-        }
-
-        let hostReference = unsafeBitCast(userInfo as AnyObject, to: CFHost.self)
         CFHostCancelInfoResolution(hostReference, .addresses)
         CFHostUnscheduleFromRunLoop(hostReference, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
         CFHostSetClient(hostReference, nil, nil)

@@ -5,7 +5,7 @@ final class DNSResolverTests: XCTestCase {
 
     func testResolveOneIP() {
         let expectation = self.expectation(description: "Query host's DNS for a single IP")
-        DNSResolver.resolve(host: "test.com") { addresses in
+        DNSResolver.resolve(host: "httpbin.net") { addresses in
             XCTAssertEqual(addresses.count, 1)
             expectation.fulfill()
         }

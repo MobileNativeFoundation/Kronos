@@ -108,7 +108,7 @@ final class NTPClient {
             completion: UnsafeMutableRawPointer(retainedCallback.toOpaque())
         )
 
-        timer = BlockTimer.scheduledTimer(withTimeInterval: timeout, repeated: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: true) { _ in
             bridgeCallback(nil, TimeInterval.infinity)
             retainedCallback.release()
 
